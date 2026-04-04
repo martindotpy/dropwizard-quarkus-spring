@@ -6,9 +6,9 @@ import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
 import com.fasterxml.jackson.annotation.JsonView;
 
-import dev.martindotpy.dropwizardquarkusspring.quarkus.core.domain.view.DtoView;
-import dev.martindotpy.dropwizardquarkusspring.quarkus.note.application.payload.CreateNotePayload;
-import dev.martindotpy.dropwizardquarkusspring.quarkus.note.application.payload.UpdateNotePayload;
+import dev.martindotpy.dropwizardquarkusspring.shared.core.application.payload.CreateNotePayload;
+import dev.martindotpy.dropwizardquarkusspring.shared.core.application.payload.UpdateNotePayload;
+import dev.martindotpy.dropwizardquarkusspring.shared.core.domain.view.DtoView;
 import io.quarkus.mongodb.panache.common.MongoEntity;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
@@ -17,7 +17,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@MongoEntity
+@MongoEntity(collection = "note")
 @Getter
 @Setter
 @Builder

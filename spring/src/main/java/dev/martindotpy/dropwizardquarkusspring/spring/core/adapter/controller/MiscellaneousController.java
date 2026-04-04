@@ -31,6 +31,7 @@ public class MiscellaneousController {
     }
 
     @GetMapping("/api/spring/hostname")
+    @Operation(summary = "Hostname", description = "Returns the hostname of the server.")
     public String hostname() {
         return "Hola desde Spring en " + hostname;
     }

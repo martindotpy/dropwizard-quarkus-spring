@@ -1,10 +1,10 @@
 package dev.martindotpy.dropwizardquarkusspring.quarkus.note.application.usecase;
 
 import dev.martindotpy.dropwizardquarkusspring.quarkus.note.application.mapper.NoteMapper;
-import dev.martindotpy.dropwizardquarkusspring.quarkus.note.application.payload.CreateNotePayload;
 import dev.martindotpy.dropwizardquarkusspring.quarkus.note.application.port.CreateNotePort;
 import dev.martindotpy.dropwizardquarkusspring.quarkus.note.domain.model.Note;
 import dev.martindotpy.dropwizardquarkusspring.quarkus.note.domain.repository.NoteRepository;
+import dev.martindotpy.dropwizardquarkusspring.shared.core.application.payload.CreateNotePayload;
 import jakarta.enterprise.context.ApplicationScoped;
 import lombok.RequiredArgsConstructor;
 

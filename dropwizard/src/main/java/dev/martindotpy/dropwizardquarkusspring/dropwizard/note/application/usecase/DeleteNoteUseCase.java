@@ -17,6 +17,7 @@ public class DeleteNoteUseCase implements DeleteNotePort {
         ObjectId objectId = new ObjectId(id);
 
         boolean deleted = noteRepository.deleteById(objectId);
+
         if (!deleted) {
             return Optional.empty();
         }

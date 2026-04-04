@@ -4,7 +4,7 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
-import dev.martindotpy.dropwizardquarkusspring.spring.note.application.payload.UpdateNotePayload;
+import dev.martindotpy.dropwizardquarkusspring.shared.core.application.payload.UpdateNotePayload;
 import dev.martindotpy.dropwizardquarkusspring.spring.note.application.port.UpdateNotePort;
 import dev.martindotpy.dropwizardquarkusspring.spring.note.domain.model.Note;
 import dev.martindotpy.dropwizardquarkusspring.spring.note.domain.repository.NoteRepository;

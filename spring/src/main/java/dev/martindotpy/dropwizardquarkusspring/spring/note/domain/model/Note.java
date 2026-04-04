@@ -9,10 +9,10 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 
+import dev.martindotpy.dropwizardquarkusspring.shared.core.application.payload.CreateNotePayload;
+import dev.martindotpy.dropwizardquarkusspring.shared.core.application.payload.UpdateNotePayload;
+import dev.martindotpy.dropwizardquarkusspring.shared.core.domain.view.DtoView;
 import dev.martindotpy.dropwizardquarkusspring.spring.core.adapter.jackson.ObjectIdDeserializer;
-import dev.martindotpy.dropwizardquarkusspring.spring.core.domain.view.DtoView;
-import dev.martindotpy.dropwizardquarkusspring.spring.note.application.payload.CreateNotePayload;
-import dev.martindotpy.dropwizardquarkusspring.spring.note.application.payload.UpdateNotePayload;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;

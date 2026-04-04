@@ -12,8 +12,8 @@ import com.mongodb.client.MongoDatabase;
 
 import dev.martindotpy.dropwizardquarkusspring.dropwizard.core.adapter.controller.MiscellaneousController;
 import dev.martindotpy.dropwizardquarkusspring.dropwizard.core.adapter.controller.OpenApiController;
+import dev.martindotpy.dropwizardquarkusspring.dropwizard.core.adapter.repository.NoteMongoRepository;
 import dev.martindotpy.dropwizardquarkusspring.dropwizard.note.adapter.controller.NoteController;
-import dev.martindotpy.dropwizardquarkusspring.dropwizard.note.adapter.repository.NoteMongoRepository;
 import dev.martindotpy.dropwizardquarkusspring.dropwizard.note.application.usecase.CreateNoteUseCase;
 import dev.martindotpy.dropwizardquarkusspring.dropwizard.note.application.usecase.DeleteNoteUseCase;
 import dev.martindotpy.dropwizardquarkusspring.dropwizard.note.application.usecase.FindNoteUseCase;
@@ -22,6 +22,7 @@ import dev.martindotpy.dropwizardquarkusspring.dropwizard.note.domain.model.Note
 import io.dropwizard.core.Application;
 import io.dropwizard.core.setup.Bootstrap;
 import io.dropwizard.core.setup.Environment;
+import io.dropwizard.jersey.setup.JerseyEnvironment;
 import io.dropwizard.lifecycle.Managed;
 
 public class DropwizardApplication extends Application<DropwizardConfiguration> {
@@ -31,7 +32,7 @@ public class DropwizardApplication extends Application<DropwizardConfiguration> 
 
     @Override
     public String getName() {
-        return "dropwizard";
+        return "Dropwizard";
     }
 
     @Override
@@ -66,6 +67,7 @@ public class DropwizardApplication extends Application<DropwizardConfiguration> 
         MongoDatabase database = mongoClient.getDatabase(configuration.getMongo().getDatabase());
 
         // Repositories and Use cases
+        @SuppressWarnings("null")
         NoteMongoRepository noteRepository = new NoteMongoRepository(database.getCollection("note", Note.class));
 
         FindNoteUseCase findNoteUseCase = new FindNoteUseCase(noteRepository);
@@ -73,9 +75,11 @@ public class DropwizardApplication extends Application<DropwizardConfiguration> 
         UpdateNoteUseCase updateNoteUseCase = new UpdateNoteUseCase(noteRepository);
         DeleteNoteUseCase deleteNoteUseCase = new DeleteNoteUseCase(noteRepository);
 
-        environment.jersey().register(new MiscellaneousController());
-        environment.jersey().register(new OpenApiController());
-        environment.jersey().register(
+        JerseyEnvironment jersey = environment.jersey();
+
+        jersey.register(new MiscellaneousController());
+        jersey.register(new OpenApiController());
+        jersey.register(
                 new NoteController(findNoteUseCase, createNoteUseCase, updateNoteUseCase, deleteNoteUseCase));
     }
 }

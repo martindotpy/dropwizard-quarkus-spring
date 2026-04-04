@@ -29,7 +29,7 @@
       "cwd": "${workspaceFolder}/dropwizard",
       "mainClass": "dev.martindotpy.dropwizardquarkusspring.dropwizard.DropwizardApplication",
       "projectName": "dropwizard",
-      "args": ["server", "config.yml"],
+      "args": ["server", "config.yaml"],
       "presentation": {
         "hidden": true
       }
@@ -51,16 +51,31 @@
       "request": "launch",
       "cwd": "${workspaceFolder}/spring",
       "mainClass": "dev.martindotpy.dropwizardquarkusspring.spring.SpringApplication",
+      "args": ["--spring.profiles.active=dev"],
       "projectName": "spring",
       "presentation": {
         "hidden": true
       }
+    },
+    {
+      "name": "Openapi",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "bun run api:generate",
+      "cwd": "${workspaceFolder}/web",
+      "preLaunchTask": "wait:services"
     }
   ],
   "compounds": [
     {
       "name": "Web + Dropwizard + Quarkus + Spring 🐞",
-      "configurations": ["Web 🐞", "Dropwizard 🐞", "Quarkus 🐞", "Spring 🐞"],
+      "configurations": [
+        "Web 🐞",
+        "Dropwizard 🐞",
+        "Quarkus 🐞",
+        "Spring 🐞",
+        "Openapi"
+      ],
       "preLaunchTask": "quarkus:dev",
       "stopAll": true
     }

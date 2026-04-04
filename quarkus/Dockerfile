@@ -6,6 +6,7 @@ ARG TZ
 
 ENV TZ=${TZ}
 
+# Workspace packages
 WORKDIR /app
 
 # Maven and dependencies
@@ -13,16 +14,26 @@ COPY .mvn/ .mvn/
 COPY --chmod=0755 mvnw ./
 
 COPY pom.xml ./
+COPY shared/pom.xml ./shared/pom.xml
+COPY dropwizard/pom.xml ./dropwizard/pom.xml
+COPY quarkus/pom.xml ./quarkus/pom.xml
+COPY spring/pom.xml ./spring/pom.xml
 
-RUN ./mvnw -B dependency:go-offline -T 1C
+RUN ./mvnw -B dependency:go-offline
 
 # Build
-COPY src src
+COPY shared/src shared/src
+COPY quarkus/src quarkus/src
 
-RUN ./mvnw -B package -DskipTests
+RUN ./mvnw -pl quarkus -am package -DskipTests -B
 
 
 FROM gcr.io/distroless/java25 AS runtime
+
+# Add wget for ready endpoint healthcheck
+COPY --from=busybox /lib/* /lib/
+COPY --from=busybox /lib64/* /lib64/
+COPY --from=busybox /bin/wget /bin/
 
 WORKDIR /app
 
@@ -30,12 +41,15 @@ ARG TZ
 
 ENV TZ=${TZ}
 
-COPY --chown=185 --from=build /app/target/quarkus-app/lib/ lib/
-COPY --chown=185 --from=build /app/target/quarkus-app/*.jar .
-COPY --chown=185 --from=build /app/target/quarkus-app/app/ app/
-COPY --chown=185 --from=build /app/target/quarkus-app/quarkus/ quarkus/
+COPY --chown=185 --from=build /app/quarkus/target/quarkus-app/lib/ lib/
+COPY --chown=185 --from=build /app/quarkus/target/quarkus-app/*.jar .
+COPY --chown=185 --from=build /app/quarkus/target/quarkus-app/app/ app/
+COPY --chown=185 --from=build /app/quarkus/target/quarkus-app/quarkus/ quarkus/
 
 EXPOSE 8080
 USER 185
 
-ENTRYPOINT [ "java", "-jar", "quarkus-run.jar", "-Dquarkus.http.host=0.0.0.0", "-Djava.util.logging.manager=org.jboss.logmanager.LogManager", "-XX:+UnlockExperimentalVMOptions", "-XX:+EnableJVMCI" ]
+ENTRYPOINT [ "java", "-jar", "quarkus-run.jar", "-Dquarkus.http.host=0.0.0.0", "-Djava.util.logging.manager=org.jboss.logmanager.LogManager", "-XX:+UnlockExperimentalVMOptions", "-XX:+EnableJVMCI"]
+
+HEALTHCHECK --interval=120s --timeout=5s --start-period=5s \
+    CMD ["/bin/wget", "--spider", "--timeout=5", "http://localhost:8081/hello"]

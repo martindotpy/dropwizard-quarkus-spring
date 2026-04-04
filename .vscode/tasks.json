@@ -6,6 +6,15 @@
     {
       "type": "shell",
       "group": "build",
+      "label": "java:bootstrap",
+      "command": "./mvnw -pl shared -am -DskipTests clean install",
+      "windows": {
+        "command": ".\\mvnw.cmd -pl shared -am -DskipTests clean install"
+      }
+    },
+    {
+      "type": "shell",
+      "group": "build",
       "label": "quarkus:dev",
       "isBackground": true,
       "problemMatcher": [
@@ -29,6 +38,15 @@
       "command": "./mvnw -f quarkus/pom.xml -q quarkus:dev",
       "windows": {
         "command": ".\\mvnw.cmd -f quarkus\\pom.xml -q quarkus:dev"
+      },
+      "dependsOn": ["java:bootstrap"]
+    },
+    {
+      "type": "shell",
+      "label": "wait:services",
+      "command": "sleep 30",
+      "windows": {
+        "command": "timeout /t 30"
       }
     }
   ]

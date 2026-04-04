@@ -5,9 +5,9 @@ import org.mapstruct.Mapping;
 import org.mapstruct.ObjectFactory;
 
 import dev.martindotpy.dropwizardquarkusspring.quarkus.core.application.StringUtilsMapper;
-import dev.martindotpy.dropwizardquarkusspring.quarkus.note.application.payload.CreateNotePayload;
-import dev.martindotpy.dropwizardquarkusspring.quarkus.note.application.payload.UpdateNotePayload;
 import dev.martindotpy.dropwizardquarkusspring.quarkus.note.domain.model.Note;
+import dev.martindotpy.dropwizardquarkusspring.shared.core.application.payload.CreateNotePayload;
+import dev.martindotpy.dropwizardquarkusspring.shared.core.application.payload.UpdateNotePayload;
 
 @Mapper(componentModel = "cdi", uses = { StringUtilsMapper.class })
 public interface NoteMapper {

@@ -29,7 +29,7 @@ services:
       timeout: 10s
       retries: 12
     ports:
-      - "27017:27017"
+      - "127.0.0.1:27017:27017"
 
   mongo-express:
     image: mongo-express:latest

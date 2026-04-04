@@ -10,7 +10,7 @@ export const Route = createFileRoute("/")({
 function IndexComponent() {
   return (
     <>
-      <div className="prose prose-h2:text-center dark:prose-invert mx-auto w-full max-w-7xl p-5">
+      <div className="prose prose-code:before:content-[''] prose-code:after:content-[''] prose-h2:text-center dark:prose-invert mx-auto w-full max-w-7xl p-5">
         <HomeHeader />
 
         <div className="grid grid-cols-1 lg:grid-cols-3 lg:divide-x">

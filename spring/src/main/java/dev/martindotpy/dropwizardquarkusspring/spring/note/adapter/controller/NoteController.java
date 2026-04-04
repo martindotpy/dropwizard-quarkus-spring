@@ -17,9 +17,9 @@ import org.springframework.web.server.ResponseStatusException;
 
 import com.fasterxml.jackson.annotation.JsonView;
 
-import dev.martindotpy.dropwizardquarkusspring.spring.core.adapter.response.NotNullDataResponse;
-import dev.martindotpy.dropwizardquarkusspring.spring.core.adapter.response.SimpleResponse;
-import dev.martindotpy.dropwizardquarkusspring.spring.core.domain.view.DtoView;
+import dev.martindotpy.dropwizardquarkusspring.shared.core.adapter.response.NotNullDataResponse;
+import dev.martindotpy.dropwizardquarkusspring.shared.core.adapter.response.SimpleResponse;
+import dev.martindotpy.dropwizardquarkusspring.shared.core.domain.view.DtoView;
 import dev.martindotpy.dropwizardquarkusspring.spring.note.application.port.CreateNotePort;
 import dev.martindotpy.dropwizardquarkusspring.spring.note.application.port.DeleteNotePort;
 import dev.martindotpy.dropwizardquarkusspring.spring.note.application.port.FindNotePort;
@@ -29,7 +29,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -46,9 +45,7 @@ public class NoteController {
 
     @GetMapping
     @Operation(summary = "Get all", description = "Retrieve all notes.")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Notes retrieved successfully"),
-    })
+    @ApiResponse(responseCode = "200", description = "Notes retrieved successfully")
     public @JsonView(DtoView.Public.class) ResponseEntity<NotNullDataResponse<List<Note>>> getAll() {
         return ResponseEntity.ok()
                 .body(NotNullDataResponse.of(findNotePort.findAll(), "Notas encontradas exitosamente"));
@@ -56,23 +53,21 @@ public class NoteController {
 
     @PostMapping
     @Operation(summary = "Create", description = "Create a new note.")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Note created successfully"),
-            @ApiResponse(responseCode = "400", description = "Invalid input data"),
-    })
-    public NotNullDataResponse<Note> create(@Valid @RequestBody @JsonView(DtoView.Create.class) Note note) {
+    @ApiResponse(responseCode = "200", description = "Note created successfully")
+    @ApiResponse(responseCode = "400", description = "Invalid input data")
+    public @JsonView(DtoView.Public.class) NotNullDataResponse<Note> create(
+            @Valid @RequestBody @JsonView(DtoView.Create.class) Note note) {
         Note createdNote = createNotePort.create(note);
         return NotNullDataResponse.of(createdNote, "Nota creada exitosamente");
     }
 
     @PutMapping
     @Operation(summary = "Update", description = "Update an existing note.")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Note updated successfully"),
-            @ApiResponse(responseCode = "400", description = "Invalid input data", content = @Content(schema = @Schema(implementation = ProblemDetail.class))),
-            @ApiResponse(responseCode = "404", description = "Note not found", content = @Content(schema = @Schema(implementation = ProblemDetail.class))),
-    })
-    public NotNullDataResponse<Note> update(@Valid @RequestBody @JsonView(DtoView.Update.class) Note note) {
+    @ApiResponse(responseCode = "200", description = "Note updated successfully")
+    @ApiResponse(responseCode = "400", description = "Invalid input data", content = @Content(schema = @Schema(implementation = ProblemDetail.class)))
+    @ApiResponse(responseCode = "404", description = "Note not found", content = @Content(schema = @Schema(implementation = ProblemDetail.class)))
+    public @JsonView(DtoView.Public.class) NotNullDataResponse<Note> update(
+            @Valid @RequestBody @JsonView(DtoView.Update.class) Note note) {
         Note updatedNote = updateNotePort.update(note)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 
@@ -81,10 +76,10 @@ public class NoteController {
 
     @DeleteMapping("/{id}")
     @Operation(summary = "Delete", description = "Delete an existing note.")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Note deleted successfully"),
-            @ApiResponse(responseCode = "404", description = "Note not found", content = @Content(schema = @Schema(implementation = ProblemDetail.class))),
-    })
+    @ApiResponse(responseCode = "200", description = "Note deleted successfully")
+    @ApiResponse(responseCode = "400", description = "Invalid note ID format", content = @Content(schema = @Schema(implementation = ProblemDetail.class)))
+    @ApiResponse(responseCode = "404", description = "Note not found", content = @Content(schema = @Schema(implementation = ProblemDetail.class)))
+    @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content(schema = @Schema(implementation = ProblemDetail.class)))
     public SimpleResponse delete(@PathVariable String id) {
         Boolean result = deleteNotePort.delete(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));

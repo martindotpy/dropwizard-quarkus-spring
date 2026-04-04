@@ -2,15 +2,23 @@ import { defineConfig } from "@hey-api/openapi-ts"
 
 export default defineConfig({
   input: [
-    "http://localhost:8080/api/dropwizard/openapi.json",
-    "http://localhost:8081/api/quarkus/openapi.json",
-    "http://localhost:8082/api/spring/openapi.json",
+    {
+      path: "http://localhost:8080/api/dropwizard/openapi.json",
+      watch: true,
+    },
+    {
+      path: "http://localhost:8081/api/quarkus/openapi.json",
+      watch: true,
+    },
+    {
+      path: "http://localhost:8082/api/spring/openapi.json",
+      watch: true,
+    },
   ],
   output: {
     path: "src/api/client",
     postProcess: ["prettier"],
   },
-  watch: true,
 
   plugins: [
     {

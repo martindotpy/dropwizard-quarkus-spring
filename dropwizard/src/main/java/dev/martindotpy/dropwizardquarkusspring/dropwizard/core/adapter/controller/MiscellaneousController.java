@@ -34,7 +34,7 @@ public class MiscellaneousController {
 
     @GET
     @Path("/api/dropwizard/hostname")
-    @Operation(summary = "Get Hostname", description = "Returns the hostname of the server.")
+    @Operation(summary = "Hostname", description = "Returns the hostname of the server.")
     @Produces(MediaType.TEXT_PLAIN)
     public String hostname() {
         return "Hello, my hostname is " + hostname;

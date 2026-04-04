@@ -1,4 +1,8 @@
 {
+  // Javascript
+  "js/ts.preferences.importModuleSpecifier": "non-relative",
+
+  // Java
   "microprofile.tools.validation.unknown.excluded": [
     "*/mp-rest/providers/*/priority",
     "mp.openapi.schema.*",

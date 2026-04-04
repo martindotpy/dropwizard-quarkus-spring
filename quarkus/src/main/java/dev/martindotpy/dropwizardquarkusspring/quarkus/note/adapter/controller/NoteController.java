@@ -13,12 +13,12 @@ import com.fasterxml.jackson.annotation.JsonView;
 
 import dev.martindotpy.dropwizardquarkusspring.quarkus.core.adapter.response.NotNullDataResponse;
 import dev.martindotpy.dropwizardquarkusspring.quarkus.core.adapter.response.SimpleResponse;
-import dev.martindotpy.dropwizardquarkusspring.quarkus.core.domain.view.DtoView;
 import dev.martindotpy.dropwizardquarkusspring.quarkus.note.application.port.CreateNotePort;
 import dev.martindotpy.dropwizardquarkusspring.quarkus.note.application.port.DeleteNotePort;
 import dev.martindotpy.dropwizardquarkusspring.quarkus.note.application.port.FindNotePort;
 import dev.martindotpy.dropwizardquarkusspring.quarkus.note.application.port.UpdateNotePort;
 import dev.martindotpy.dropwizardquarkusspring.quarkus.note.domain.model.Note;
+import dev.martindotpy.dropwizardquarkusspring.shared.core.domain.view.DtoView;
 import io.quarkiverse.resteasy.problem.validation.HttpValidationProblem;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.DELETE;
@@ -41,15 +41,17 @@ public class NoteController {
 
     @GET
     @Operation(summary = "Get all", description = "Retrieve all notes.")
+    @APIResponse(responseCode = "200", description = "Notes retrieved successfully")
     public @JsonView(DtoView.Public.class) NotNullDataResponse<List<Note>> getAll() {
         return NotNullDataResponse.of(findNotePort.findAll(), "Notas encontradas exitosamente");
     }
 
     @POST
     @Operation(description = "Create a new note.")
-    @APIResponse(responseCode = "200")
-    @APIResponse(responseCode = "400", description = "Bad Request", content = @Content(mediaType = "application/problem+json", schema = @Schema(implementation = HttpValidationProblem.class)))
-    public NotNullDataResponse<Note> create(@Valid @JsonView(DtoView.Create.class) Note note) {
+    @APIResponse(responseCode = "200", description = "Note created successfully")
+    @APIResponse(responseCode = "422", description = "Validation error", content = @Content(mediaType = "application/problem+json", schema = @Schema(implementation = HttpValidationProblem.class)))
+    public @JsonView(DtoView.Public.class) NotNullDataResponse<Note> create(
+            @Valid @JsonView(DtoView.Create.class) Note note) {
         Note createdNote = createNotePort.create(note);
 
         return NotNullDataResponse.of(createdNote, "Nota creada exitosamente");
@@ -57,10 +59,11 @@ public class NoteController {
 
     @PUT
     @Operation(description = "Update an existing note.")
-    @APIResponse(responseCode = "200")
-    @APIResponse(responseCode = "400", description = "Bad Request", content = @Content(mediaType = "application/problem+json", schema = @Schema(implementation = HttpValidationProblem.class)))
-    public NotNullDataResponse<Note> update(@Valid @JsonView(DtoView.Update.class) Note note)
-            throws NotFoundException {
+    @APIResponse(responseCode = "200", description = "Note updated successfully")
+    @APIResponse(responseCode = "404", description = "Note not found")
+    @APIResponse(responseCode = "422", description = "Validation error", content = @Content(mediaType = "application/problem+json", schema = @Schema(implementation = HttpValidationProblem.class)))
+    public @JsonView(DtoView.Public.class) NotNullDataResponse<Note> update(
+            @Valid @JsonView(DtoView.Update.class) Note note) {
         Note updatedNode = updateNotePort.update(note)
                 .orElseThrow(NotFoundException::new);
 
@@ -70,8 +73,12 @@ public class NoteController {
     @DELETE
     @Path("/{id}")
     @Operation(description = "Delete an existing note.")
-    public SimpleResponse delete(@RestPath String id) throws NotFoundException, InternalServerErrorException {
-        var result = deleteNotePort.delete(id)
+    @APIResponse(responseCode = "200", description = "Note deleted successfully")
+    @APIResponse(responseCode = "404", description = "Note not found")
+    @APIResponse(responseCode = "422", description = "Validation error", content = @Content(mediaType = "application/problem+json", schema = @Schema(implementation = HttpValidationProblem.class)))
+    @APIResponse(responseCode = "500", description = "Internal Server Error")
+    public SimpleResponse delete(@RestPath String id) {
+        Boolean result = deleteNotePort.delete(id)
                 .orElseThrow(() -> new NotFoundException());
 
         if (!result) {
