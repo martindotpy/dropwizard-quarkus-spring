@@ -1,0 +1,121 @@
+---
+import Styles from "@/core/components/atoms/Styles.astro"
+import Sonner from "@/core/components/molecules/Sonner.astro"
+import { site } from "@/core/configuration/app-configuration"
+import {
+  appName,
+  author,
+  defaultDescription,
+} from "@/core/constant/seo-constant"
+import { getTitle } from "@/core/kit/title-kit"
+import { pwaAssetsHead } from "virtual:pwa-assets/head"
+import { pwaInfo } from "virtual:pwa-info"
+
+// Context
+interface Props {
+  title?: string
+  description?: string
+  keywords?: string
+}
+
+const { title, description = defaultDescription } = Astro.props
+
+// Title
+const fullTitle = getTitle(title)
+
+// Site
+const { url } = Astro
+---
+
+<!doctype html>
+<html lang="es" class="dark" style="color-scheme: dark;">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>{fullTitle}</title>
+
+    <meta name="robots" content="noindex, nofollow" />
+
+    <meta name="author" content={author} />
+    <meta name="description" content={description} />
+
+    <link rel="canonical" href={url} />
+
+    <meta property="og:site_name" content="Dropwizard vs Quarkus vs Spring" />
+    <meta property="og:url" content={site} />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:locale" content="es" />
+    <meta property="og:description" content={description} />
+    <slot name="og:image" />
+    <slot name="og:image:alt">
+      <meta property="og:image:alt" content={appName} />
+    </slot>
+    <slot name="og:image:width">
+      <meta property="og:image:width" content="1200" />
+    </slot>
+    <slot name="og:image:height">
+      <meta property="og:image:height" content="630" />
+    </slot>
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:domain" content={site.replace("https://", "")} />
+    <meta name="twitter:url" content={site} />
+    <meta name="twitter:title" content={fullTitle} />
+    <meta name="twitter:description" content={description} />
+    <slot name="twitter:image" />
+    <slot name="twitter:image:alt">
+      <meta name="twitter:image:alt" content={appName} />
+    </slot>
+    <slot name="twitter:image:width">
+      <meta name="twitter:image:width" content="1200" />
+    </slot>
+    <slot name="twitter:image:height">
+      <meta name="twitter:image:height" content="630" />
+    </slot>
+
+    {
+      pwaAssetsHead.themeColor && (
+        <>
+          <meta name="theme-color" content={pwaAssetsHead.themeColor.content} />
+          <meta
+            name="msapplication-TileColor"
+            content={pwaAssetsHead.themeColor.content}
+          />
+        </>
+      )
+    }
+
+    <meta name="msapplication-TileImage" content="/pwa-150x150.png" />
+    {
+      pwaAssetsHead.links.map((link) => (
+        <link
+          id={link.id}
+          rel={link.rel}
+          href={link.href}
+          sizes={link.sizes}
+          media={link.media}
+          type={link.type}
+        />
+      ))
+    }
+
+    {pwaInfo && <Fragment set:html={pwaInfo.webManifest.linkTag} />}
+
+    <slot name="head" />
+
+    {/* Styles */}
+    <Styles />
+
+    {/* Scripts */}
+    <Sonner />
+    <script src="@/core/scripts/pwa.ts"></script>
+    <script src="@/core/scripts/update-favicon.ts"></script>
+  </head>
+
+  <body class="flex min-h-dvh flex-col">
+    <slot />
+  </body>
+</html>

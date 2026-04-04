@@ -1,0 +1,56 @@
+---
+import Layout from "@/core/components/layouts/Layout.astro"
+import { ScalarComponent } from "@scalar/astro"
+
+// Context
+export const prerender = true
+---
+
+<Layout
+  title="OpenAPI Documentation"
+  description="Explore the OpenAPI documentation for all services."
+>
+  <ScalarComponent
+    configuration={{
+      theme: "deepSpace",
+      sources: [
+        {
+          title: "Dropwizard",
+          url: "/api/dropwizard/openapi.json",
+        },
+        {
+          title: "Quarkus",
+          url: "/api/quarkus/openapi.json",
+        },
+        {
+          title: "Spring",
+          url: "/api/spring/openapi.json",
+        },
+      ],
+      operationsSorter: (a, b) => {
+        const methodOrder = ["get", "post", "put", "delete"]
+        const methodComparison =
+          methodOrder.indexOf(a.method) - methodOrder.indexOf(b.method)
+
+        if (methodComparison !== 0) {
+          return methodComparison
+        }
+
+        return a.path.localeCompare(b.path)
+      },
+    }}
+  />
+</Layout>
+
+<style>
+  @reference "@styles";
+
+  :root {
+    --scalar-font: var(--default-font-family);
+    --scalar-background-1: var(--color-background);
+  }
+
+  html {
+    @apply no-scrollbar;
+  }
+</style>

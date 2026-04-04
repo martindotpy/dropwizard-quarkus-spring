@@ -1,0 +1,68 @@
+{
+  // Use IntelliSense to learn about possible attributes.
+  // Hover to view descriptions of existing attributes.
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Web 🐞",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "bun run dev",
+      "cwd": "${workspaceFolder}/web",
+      "serverReadyAction": {
+        "action": "debugWithChrome",
+        "pattern": "localhost:([0-9]+)/",
+        "uriFormat": "http://localhost:%s",
+        "webRoot": "${workspaceFolder}/web",
+        "killOnServerStop": true
+      },
+      "internalConsoleOptions": "neverOpen",
+      "presentation": {
+        "hidden": true
+      }
+    },
+    {
+      "name": "Dropwizard 🐞",
+      "type": "java",
+      "request": "launch",
+      "cwd": "${workspaceFolder}/dropwizard",
+      "mainClass": "dev.martindotpy.dropwizardquarkusspring.dropwizard.DropwizardApplication",
+      "projectName": "dropwizard",
+      "args": ["server", "config.yml"],
+      "presentation": {
+        "hidden": true
+      }
+    },
+    {
+      "name": "Quarkus 🐞",
+      "type": "java",
+      "request": "attach",
+      "preLaunchTask": "quarkus:dev",
+      "hostName": "localhost",
+      "port": 5005,
+      "presentation": {
+        "hidden": true
+      }
+    },
+    {
+      "name": "Spring 🐞",
+      "type": "java",
+      "request": "launch",
+      "cwd": "${workspaceFolder}/spring",
+      "mainClass": "dev.martindotpy.dropwizardquarkusspring.spring.SpringApplication",
+      "projectName": "spring",
+      "presentation": {
+        "hidden": true
+      }
+    }
+  ],
+  "compounds": [
+    {
+      "name": "Web + Dropwizard + Quarkus + Spring 🐞",
+      "configurations": ["Web 🐞", "Dropwizard 🐞", "Quarkus 🐞", "Spring 🐞"],
+      "preLaunchTask": "quarkus:dev",
+      "stopAll": true
+    }
+  ]
+}

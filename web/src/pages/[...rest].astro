@@ -1,0 +1,11 @@
+---
+import Layout from "@/core/components/layouts/Layout.astro"
+import { AppEntry } from "@/pages/_app/entry"
+
+// Context
+export const prerender = false
+---
+
+<Layout>
+  <AppEntry client:only="react" clientOnly={true} />
+</Layout>

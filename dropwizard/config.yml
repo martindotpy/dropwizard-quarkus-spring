@@ -1,0 +1,17 @@
+---
+server:
+  applicationConnectors:
+    - type: http
+      port: 8080
+  adminConnectors:
+    - type: http
+      port: 9091
+
+logging:
+  level: INFO
+  loggers:
+    dev.martindotpy: DEBUG
+
+mongo:
+  uri: mongodb://admin:admin@localhost:27017/notes-db?authSource=admin
+  database: notes-db

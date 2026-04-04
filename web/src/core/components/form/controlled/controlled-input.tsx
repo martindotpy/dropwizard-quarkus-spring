@@ -1,0 +1,84 @@
+import { Field, FieldError, FieldLabel } from "@/core/components/ui/field"
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupInput,
+} from "@/core/components/ui/input-group"
+import type { ClassNameProp } from "@/core/kit/component-kit"
+import {
+  Controller,
+  type FieldPath,
+  type FieldValues,
+  type UseControllerProps,
+} from "react-hook-form"
+
+// Component
+interface ControlledInputProps<
+  TIconProps extends ClassNameProp = ClassNameProp,
+  TFieldValues extends FieldValues = FieldValues,
+  TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
+  TTransformedValues = TFieldValues,
+> extends UseControllerProps<TFieldValues, TName, TTransformedValues> {
+  label?: React.ReactNode
+  inputProps?: React.ComponentProps<typeof InputGroupInput>
+  labelProps?: React.ComponentProps<typeof FieldLabel>
+  errorProps?: React.ComponentProps<typeof FieldError>
+  icon?: React.FunctionComponent<TIconProps>
+  iconProps?: TIconProps
+}
+
+export function ControlledInput<
+  TIconProps extends ClassNameProp = ClassNameProp,
+  TFieldValues extends FieldValues = FieldValues,
+  TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
+>({
+  control,
+  name,
+  label,
+  inputProps: { className: inputClassName, ...inputProps } = {},
+  labelProps: { className: labelClassName, ...labelProps } = {},
+  errorProps: { className: errorClassName, ...errorProps } = {},
+  icon: Icon,
+  iconProps = {} as TIconProps,
+  ...props
+}: ControlledInputProps<TIconProps, TFieldValues, TName>) {
+  return (
+    <Controller
+      control={control}
+      name={name}
+      render={({ field, fieldState }) => (
+        <Field data-invalid={fieldState.invalid}>
+          <FieldLabel htmlFor={name} className={labelClassName} {...labelProps}>
+            {label}
+          </FieldLabel>
+
+          <InputGroup>
+            <InputGroupInput
+              id={name}
+              type="text"
+              className={inputClassName}
+              aria-invalid={fieldState.invalid}
+              {...field}
+              {...inputProps}
+            />
+
+            {Icon && (
+              <InputGroupAddon align="inline-end">
+                <Icon {...iconProps} className={iconProps.className} />
+              </InputGroupAddon>
+            )}
+          </InputGroup>
+
+          {fieldState.invalid && (
+            <FieldError
+              className={errorClassName}
+              {...errorProps}
+              errors={[fieldState.error]}
+            />
+          )}
+        </Field>
+      )}
+      {...props}
+    />
+  )
+}
