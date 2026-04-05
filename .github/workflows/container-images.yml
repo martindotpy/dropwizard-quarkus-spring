@@ -173,7 +173,7 @@ jobs:
           create-storage-record: false
 
   build-quarkus-jvm:
-    name: Build and publish quarkus (JVM)
+    name: Build and publish quarkus
     needs: changes
     if: needs.changes.outputs.quarkus == 'true'
     runs-on: ubuntu-latest
