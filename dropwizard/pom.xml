@@ -52,6 +52,11 @@
         </dependency>
 
         <dependency>
+            <groupId>org.glassfish.jersey.media</groupId>
+            <artifactId>jersey-media-sse</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>dev.martindotpy.dropwizard-quarkus-spring</groupId>
             <artifactId>shared</artifactId>
             <version>${project.version}</version>

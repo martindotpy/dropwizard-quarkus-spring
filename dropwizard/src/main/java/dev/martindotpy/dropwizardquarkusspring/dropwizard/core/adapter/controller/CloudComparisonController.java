@@ -1,9 +1,7 @@
 package dev.martindotpy.dropwizardquarkusspring.dropwizard.core.adapter.controller;
 
-import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -12,8 +10,6 @@ import org.eclipse.microprofile.openapi.annotations.media.Content;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import dev.martindotpy.dropwizardquarkusspring.shared.cloud.model.GhcrImageCatalog;
 import dev.martindotpy.dropwizardquarkusspring.shared.cloud.model.GhcrManifestListResponse;
@@ -29,9 +25,12 @@ import jakarta.ws.rs.ProcessingException;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.client.Client;
+import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.HttpHeaders;
 import jakarta.ws.rs.core.MediaType;
-import jakarta.ws.rs.core.StreamingOutput;
+import jakarta.ws.rs.sse.OutboundSseEvent;
+import jakarta.ws.rs.sse.Sse;
+import jakarta.ws.rs.sse.SseEventSink;
 import lombok.RequiredArgsConstructor;
 
 @Path("/api/dropwizard/cloud")
@@ -41,7 +40,6 @@ public class CloudComparisonController {
     private static final long STREAM_INTERVAL_MS = 1000L;
 
     private final Client ghcrClient;
-    private final ObjectMapper objectMapper;
     private final String serviceName;
     private final String version;
     private final AtomicLong startupReadyMs;
@@ -68,25 +66,9 @@ public class CloudComparisonController {
     @Path("/metrics/live")
     @Produces(MediaType.SERVER_SENT_EVENTS)
     @Operation(summary = "Cloud live metrics stream", description = "Streams live startup and runtime metrics as server-sent events.")
-    @APIResponse(responseCode = "200", description = "Cloud live metrics stream started", content = @Content(mediaType = MediaType.APPLICATION_JSON, schema = @Schema(implementation = ServiceLiveMetrics.class)))
-    public StreamingOutput liveMetricsStream() {
-        return output -> {
-            while (!Thread.currentThread().isInterrupted()) {
-                try {
-                    String payload = objectMapper.writeValueAsString(ServiceSnapshotFactory.liveMetrics());
-
-                    output.write("event: metrics\n".getBytes(StandardCharsets.UTF_8));
-                    output.write(("data: " + payload + "\n\n").getBytes(StandardCharsets.UTF_8));
-                    output.flush();
-
-                    Thread.sleep(STREAM_INTERVAL_MS);
-                } catch (InterruptedException ex) {
-                    Thread.currentThread().interrupt();
-                } catch (IOException ex) {
-                    break;
-                }
-            }
-        };
+    @APIResponse(responseCode = "200", description = "Cloud live metrics stream started", content = @Content(mediaType = MediaType.SERVER_SENT_EVENTS, schema = @Schema(implementation = ServiceLiveMetrics.class)))
+    public void liveMetricsStream(@Context SseEventSink eventSink, @Context Sse sse) {
+        Thread.ofVirtual().start(() -> streamMetrics(eventSink, sse));
     }
 
     // Helpers
@@ -129,6 +111,27 @@ public class CloudComparisonController {
         return imageNames.stream()
                 .map(this::fetchImageSummary)
                 .toList();
+    }
+
+    private void streamMetrics(SseEventSink eventSink, Sse sse) {
+        try (eventSink) {
+            while (!Thread.currentThread().isInterrupted() && !eventSink.isClosed()) {
+                eventSink.send(toSseEvent(sse, ServiceSnapshotFactory.liveMetrics())).toCompletableFuture().join();
+                Thread.sleep(STREAM_INTERVAL_MS);
+            }
+        } catch (InterruptedException ex) {
+            Thread.currentThread().interrupt();
+        } catch (RuntimeException ex) {
+            // Client disconnected; stop the stream loop
+        }
+    }
+
+    private static OutboundSseEvent toSseEvent(Sse sse, ServiceLiveMetrics payload) {
+        return sse.newEventBuilder()
+                .name("metrics")
+                .mediaType(MediaType.APPLICATION_JSON_TYPE)
+                .data(ServiceLiveMetrics.class, payload)
+                .build();
     }
 
     private static String hostname() {

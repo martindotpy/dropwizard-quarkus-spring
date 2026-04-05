@@ -99,7 +99,6 @@ public class DropwizardApplication extends Application<DropwizardConfiguration> 
         jersey.register(new MiscellaneousController());
         jersey.register(new CloudComparisonController(
                 ghcrClient,
-                environment.getObjectMapper(),
                 getName(),
                 DropwizardApplication.class.getPackage().getImplementationVersion(),
                 startupReadyMs));

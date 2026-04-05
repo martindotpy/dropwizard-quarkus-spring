@@ -11,7 +11,6 @@ import {
   deleteApiDropwizardNoteById,
   deleteApiQuarkusNoteById,
   getApiDropwizardCloudMetricsInfo,
-  getApiDropwizardCloudMetricsLive,
   getApiDropwizardHostname,
   getApiDropwizardNote,
   getApiQuarkusCloudMetricsInfo,
@@ -38,8 +37,6 @@ import type {
   DeleteApiQuarkusNoteByIdResponse,
   GetApiDropwizardCloudMetricsInfoData,
   GetApiDropwizardCloudMetricsInfoResponse,
-  GetApiDropwizardCloudMetricsLiveData,
-  GetApiDropwizardCloudMetricsLiveResponse,
   GetApiDropwizardHostnameData,
   GetApiDropwizardHostnameResponse,
   GetApiDropwizardNoteData,
@@ -147,36 +144,6 @@ export const getApiDropwizardCloudMetricsInfoOptions = (
       return data
     },
     queryKey: getApiDropwizardCloudMetricsInfoQueryKey(options),
-  })
-
-export const getApiDropwizardCloudMetricsLiveQueryKey = (
-  options?: Options<GetApiDropwizardCloudMetricsLiveData>
-) => createQueryKey("getApiDropwizardCloudMetricsLive", options)
-
-/**
- * Cloud live metrics stream
- *
- * Streams live startup and runtime metrics as server-sent events.
- */
-export const getApiDropwizardCloudMetricsLiveOptions = (
-  options?: Options<GetApiDropwizardCloudMetricsLiveData>
-) =>
-  queryOptions<
-    GetApiDropwizardCloudMetricsLiveResponse,
-    DefaultError,
-    GetApiDropwizardCloudMetricsLiveResponse,
-    ReturnType<typeof getApiDropwizardCloudMetricsLiveQueryKey>
-  >({
-    queryFn: async ({ queryKey, signal }) => {
-      const { data } = await getApiDropwizardCloudMetricsLive({
-        ...options,
-        ...queryKey[0],
-        signal,
-        throwOnError: true,
-      })
-      return data
-    },
-    queryKey: getApiDropwizardCloudMetricsLiveQueryKey(options),
   })
 
 export const getApiDropwizardHostnameQueryKey = (

@@ -12,6 +12,7 @@ import type {
   GetApiDropwizardCloudMetricsInfoData,
   GetApiDropwizardCloudMetricsInfoResponses,
   GetApiDropwizardCloudMetricsLiveData,
+  GetApiDropwizardCloudMetricsLiveResponse,
   GetApiDropwizardCloudMetricsLiveResponses,
   GetApiDropwizardHostnameData,
   GetApiDropwizardHostnameResponses,
@@ -100,9 +101,13 @@ export const getApiDropwizardCloudMetricsInfo = <
 export const getApiDropwizardCloudMetricsLive = <
   ThrowOnError extends boolean = false,
 >(
-  options?: Options<GetApiDropwizardCloudMetricsLiveData, ThrowOnError>
+  options?: Options<
+    GetApiDropwizardCloudMetricsLiveData,
+    ThrowOnError,
+    GetApiDropwizardCloudMetricsLiveResponse
+  >
 ) =>
-  (options?.client ?? client).get<
+  (options?.client ?? client).sse.get<
     GetApiDropwizardCloudMetricsLiveResponses,
     unknown,
     ThrowOnError
