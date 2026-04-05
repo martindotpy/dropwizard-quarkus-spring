@@ -19,6 +19,8 @@ import dev.martindotpy.dropwizardquarkusspring.dropwizard.note.application.useca
 import dev.martindotpy.dropwizardquarkusspring.dropwizard.note.application.usecase.FindNoteUseCase;
 import dev.martindotpy.dropwizardquarkusspring.dropwizard.note.application.usecase.UpdateNoteUseCase;
 import dev.martindotpy.dropwizardquarkusspring.dropwizard.note.domain.model.Note;
+import io.dropwizard.configuration.EnvironmentVariableSubstitutor;
+import io.dropwizard.configuration.SubstitutingSourceProvider;
 import io.dropwizard.core.Application;
 import io.dropwizard.core.setup.Bootstrap;
 import io.dropwizard.core.setup.Environment;
@@ -37,6 +39,10 @@ public class DropwizardApplication extends Application<DropwizardConfiguration> 
 
     @Override
     public void initialize(final Bootstrap<DropwizardConfiguration> bootstrap) {
+        bootstrap.setConfigurationSourceProvider(
+                new SubstitutingSourceProvider(
+                        bootstrap.getConfigurationSourceProvider(),
+                        new EnvironmentVariableSubstitutor(false)));
     }
 
     @Override

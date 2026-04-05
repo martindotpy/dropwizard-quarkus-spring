@@ -13,5 +13,5 @@ logging:
     dev.martindotpy: DEBUG
 
 mongo:
-  uri: mongodb://admin:admin@localhost:27017/notes-db?authSource=admin
+  uri: ${MONGO_URI:-mongodb://admin:admin@localhost:27017/notes-db?authSource=admin}
   database: notes-db
