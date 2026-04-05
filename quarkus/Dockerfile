@@ -46,7 +46,7 @@ COPY --chown=185 --from=build /app/quarkus/target/quarkus-app/*.jar .
 COPY --chown=185 --from=build /app/quarkus/target/quarkus-app/app/ app/
 COPY --chown=185 --from=build /app/quarkus/target/quarkus-app/quarkus/ quarkus/
 
-EXPOSE 8080
+EXPOSE 8081
 USER 185
 
 ENTRYPOINT [ "java", "-jar", "quarkus-run.jar", "-Dquarkus.http.host=0.0.0.0", "-Djava.util.logging.manager=org.jboss.logmanager.LogManager", "-XX:+UnlockExperimentalVMOptions", "-XX:+EnableJVMCI"]

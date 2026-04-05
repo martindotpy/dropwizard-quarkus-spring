@@ -44,7 +44,7 @@ ENV TZ=${TZ}
 
 COPY --chown=185 --from=build /app/spring/target/*.jar .
 
-EXPOSE 8080
+EXPOSE 8082
 USER 185
 
 ENTRYPOINT [ "java", "-jar", "spring-1.0.0-SNAPSHOT.jar", "-XX:+UnlockExperimentalVMOptions", "-XX:+EnableJVMCI"]

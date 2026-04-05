@@ -43,7 +43,7 @@ ENV TZ=${TZ}
 
 COPY --chown=185 --from=build /app/quarkus/target/*-runner ./application
 
-EXPOSE 8080
+EXPOSE 8081
 USER 185
 
 ENTRYPOINT [ "./application", "-Dquarkus.http.host=0.0.0.0" ]
