@@ -9,10 +9,19 @@ import type {
   DeleteApiQuarkusNoteByIdData,
   DeleteApiQuarkusNoteByIdErrors,
   DeleteApiQuarkusNoteByIdResponses,
+  GetApiDropwizardCloudMetricsInfoData,
+  GetApiDropwizardCloudMetricsInfoResponses,
+  GetApiDropwizardCloudMetricsLiveData,
+  GetApiDropwizardCloudMetricsLiveResponses,
   GetApiDropwizardHostnameData,
   GetApiDropwizardHostnameResponses,
   GetApiDropwizardNoteData,
   GetApiDropwizardNoteResponses,
+  GetApiQuarkusCloudMetricsInfoData,
+  GetApiQuarkusCloudMetricsInfoResponses,
+  GetApiQuarkusCloudMetricsLiveData,
+  GetApiQuarkusCloudMetricsLiveResponse,
+  GetApiQuarkusCloudMetricsLiveResponses,
   GetApiQuarkusHostnameData,
   GetApiQuarkusHostnameResponses,
   GetApiQuarkusNoteData,
@@ -27,6 +36,11 @@ import type {
   OpenapiGetAllResponses,
   OpenapiHostnameData,
   OpenapiHostnameResponses,
+  OpenapiLiveMetricsStreamData,
+  OpenapiLiveMetricsStreamResponse,
+  OpenapiLiveMetricsStreamResponses,
+  OpenapiStaticMetricsData,
+  OpenapiStaticMetricsResponses,
   OpenapiUpdateData,
   OpenapiUpdateErrors,
   OpenapiUpdateResponses,
@@ -61,6 +75,38 @@ export type Options<
    */
   meta?: Record<string, unknown>
 }
+
+/**
+ * Cloud static metrics
+ *
+ * Returns static metrics and image metadata used for framework comparison.
+ */
+export const getApiDropwizardCloudMetricsInfo = <
+  ThrowOnError extends boolean = false,
+>(
+  options?: Options<GetApiDropwizardCloudMetricsInfoData, ThrowOnError>
+) =>
+  (options?.client ?? client).get<
+    GetApiDropwizardCloudMetricsInfoResponses,
+    unknown,
+    ThrowOnError
+  >({ url: "/api/dropwizard/cloud/metrics/info", ...options })
+
+/**
+ * Cloud live metrics stream
+ *
+ * Streams live startup and runtime metrics as server-sent events.
+ */
+export const getApiDropwizardCloudMetricsLive = <
+  ThrowOnError extends boolean = false,
+>(
+  options?: Options<GetApiDropwizardCloudMetricsLiveData, ThrowOnError>
+) =>
+  (options?.client ?? client).get<
+    GetApiDropwizardCloudMetricsLiveResponses,
+    unknown,
+    ThrowOnError
+  >({ url: "/api/dropwizard/cloud/metrics/live", ...options })
 
 /**
  * Hostname
@@ -147,6 +193,42 @@ export const deleteApiDropwizardNoteById = <
     DeleteApiDropwizardNoteByIdErrors,
     ThrowOnError
   >({ url: "/api/dropwizard/note/{id}", ...options })
+
+/**
+ * Cloud static metrics
+ *
+ * Returns static metrics and image metadata used for framework comparison.
+ */
+export const getApiQuarkusCloudMetricsInfo = <
+  ThrowOnError extends boolean = false,
+>(
+  options?: Options<GetApiQuarkusCloudMetricsInfoData, ThrowOnError>
+) =>
+  (options?.client ?? client).get<
+    GetApiQuarkusCloudMetricsInfoResponses,
+    unknown,
+    ThrowOnError
+  >({ url: "/api/quarkus/cloud/metrics/info", ...options })
+
+/**
+ * Cloud live metrics stream
+ *
+ * Streams live startup and runtime metrics as server-sent events.
+ */
+export const getApiQuarkusCloudMetricsLive = <
+  ThrowOnError extends boolean = false,
+>(
+  options?: Options<
+    GetApiQuarkusCloudMetricsLiveData,
+    ThrowOnError,
+    GetApiQuarkusCloudMetricsLiveResponse
+  >
+) =>
+  (options?.client ?? client).sse.get<
+    GetApiQuarkusCloudMetricsLiveResponses,
+    unknown,
+    ThrowOnError
+  >({ url: "/api/quarkus/cloud/metrics/live", ...options })
 
 /**
  * Hostname
@@ -299,6 +381,38 @@ export const openapiHostname = <ThrowOnError extends boolean = false>(
     unknown,
     ThrowOnError
   >({ url: "/api/spring/hostname", ...options })
+
+/**
+ * Cloud live metrics stream
+ *
+ * Streams live startup and runtime metrics as server-sent events.
+ */
+export const openapiLiveMetricsStream = <ThrowOnError extends boolean = false>(
+  options?: Options<
+    OpenapiLiveMetricsStreamData,
+    ThrowOnError,
+    OpenapiLiveMetricsStreamResponse
+  >
+) =>
+  (options?.client ?? client).sse.get<
+    OpenapiLiveMetricsStreamResponses,
+    unknown,
+    ThrowOnError
+  >({ url: "/api/spring/cloud/metrics/live", ...options })
+
+/**
+ * Cloud static metrics
+ *
+ * Returns static metrics and image metadata used for framework comparison.
+ */
+export const openapiStaticMetrics = <ThrowOnError extends boolean = false>(
+  options?: Options<OpenapiStaticMetricsData, ThrowOnError>
+) =>
+  (options?.client ?? client).get<
+    OpenapiStaticMetricsResponses,
+    unknown,
+    ThrowOnError
+  >({ url: "/api/spring/cloud/metrics/info", ...options })
 
 /**
  * Delete

@@ -10,14 +10,18 @@ import { client } from "../client.gen"
 import {
   deleteApiDropwizardNoteById,
   deleteApiQuarkusNoteById,
+  getApiDropwizardCloudMetricsInfo,
+  getApiDropwizardCloudMetricsLive,
   getApiDropwizardHostname,
   getApiDropwizardNote,
+  getApiQuarkusCloudMetricsInfo,
   getApiQuarkusHostname,
   getApiQuarkusNote,
   openapiCreate,
   openapiDelete,
   openapiGetAll,
   openapiHostname,
+  openapiStaticMetrics,
   openapiUpdate,
   type Options,
   postApiDropwizardNote,
@@ -32,10 +36,16 @@ import type {
   DeleteApiQuarkusNoteByIdData,
   DeleteApiQuarkusNoteByIdError,
   DeleteApiQuarkusNoteByIdResponse,
+  GetApiDropwizardCloudMetricsInfoData,
+  GetApiDropwizardCloudMetricsInfoResponse,
+  GetApiDropwizardCloudMetricsLiveData,
+  GetApiDropwizardCloudMetricsLiveResponse,
   GetApiDropwizardHostnameData,
   GetApiDropwizardHostnameResponse,
   GetApiDropwizardNoteData,
   GetApiDropwizardNoteResponse,
+  GetApiQuarkusCloudMetricsInfoData,
+  GetApiQuarkusCloudMetricsInfoResponse,
   GetApiQuarkusHostnameData,
   GetApiQuarkusHostnameResponse,
   GetApiQuarkusNoteData,
@@ -50,6 +60,8 @@ import type {
   OpenapiGetAllResponse,
   OpenapiHostnameData,
   OpenapiHostnameResponse,
+  OpenapiStaticMetricsData,
+  OpenapiStaticMetricsResponse,
   OpenapiUpdateData,
   OpenapiUpdateError,
   OpenapiUpdateResponse,
@@ -106,6 +118,66 @@ const createQueryKey = <TOptions extends Options>(
   }
   return [params]
 }
+
+export const getApiDropwizardCloudMetricsInfoQueryKey = (
+  options?: Options<GetApiDropwizardCloudMetricsInfoData>
+) => createQueryKey("getApiDropwizardCloudMetricsInfo", options)
+
+/**
+ * Cloud static metrics
+ *
+ * Returns static metrics and image metadata used for framework comparison.
+ */
+export const getApiDropwizardCloudMetricsInfoOptions = (
+  options?: Options<GetApiDropwizardCloudMetricsInfoData>
+) =>
+  queryOptions<
+    GetApiDropwizardCloudMetricsInfoResponse,
+    DefaultError,
+    GetApiDropwizardCloudMetricsInfoResponse,
+    ReturnType<typeof getApiDropwizardCloudMetricsInfoQueryKey>
+  >({
+    queryFn: async ({ queryKey, signal }) => {
+      const { data } = await getApiDropwizardCloudMetricsInfo({
+        ...options,
+        ...queryKey[0],
+        signal,
+        throwOnError: true,
+      })
+      return data
+    },
+    queryKey: getApiDropwizardCloudMetricsInfoQueryKey(options),
+  })
+
+export const getApiDropwizardCloudMetricsLiveQueryKey = (
+  options?: Options<GetApiDropwizardCloudMetricsLiveData>
+) => createQueryKey("getApiDropwizardCloudMetricsLive", options)
+
+/**
+ * Cloud live metrics stream
+ *
+ * Streams live startup and runtime metrics as server-sent events.
+ */
+export const getApiDropwizardCloudMetricsLiveOptions = (
+  options?: Options<GetApiDropwizardCloudMetricsLiveData>
+) =>
+  queryOptions<
+    GetApiDropwizardCloudMetricsLiveResponse,
+    DefaultError,
+    GetApiDropwizardCloudMetricsLiveResponse,
+    ReturnType<typeof getApiDropwizardCloudMetricsLiveQueryKey>
+  >({
+    queryFn: async ({ queryKey, signal }) => {
+      const { data } = await getApiDropwizardCloudMetricsLive({
+        ...options,
+        ...queryKey[0],
+        signal,
+        throwOnError: true,
+      })
+      return data
+    },
+    queryKey: getApiDropwizardCloudMetricsLiveQueryKey(options),
+  })
 
 export const getApiDropwizardHostnameQueryKey = (
   options?: Options<GetApiDropwizardHostnameData>
@@ -253,6 +325,36 @@ export const deleteApiDropwizardNoteByIdMutation = (
   }
   return mutationOptions
 }
+
+export const getApiQuarkusCloudMetricsInfoQueryKey = (
+  options?: Options<GetApiQuarkusCloudMetricsInfoData>
+) => createQueryKey("getApiQuarkusCloudMetricsInfo", options)
+
+/**
+ * Cloud static metrics
+ *
+ * Returns static metrics and image metadata used for framework comparison.
+ */
+export const getApiQuarkusCloudMetricsInfoOptions = (
+  options?: Options<GetApiQuarkusCloudMetricsInfoData>
+) =>
+  queryOptions<
+    GetApiQuarkusCloudMetricsInfoResponse,
+    DefaultError,
+    GetApiQuarkusCloudMetricsInfoResponse,
+    ReturnType<typeof getApiQuarkusCloudMetricsInfoQueryKey>
+  >({
+    queryFn: async ({ queryKey, signal }) => {
+      const { data } = await getApiQuarkusCloudMetricsInfo({
+        ...options,
+        ...queryKey[0],
+        signal,
+        throwOnError: true,
+      })
+      return data
+    },
+    queryKey: getApiQuarkusCloudMetricsInfoQueryKey(options),
+  })
 
 export const getApiQuarkusHostnameQueryKey = (
   options?: Options<GetApiQuarkusHostnameData>
@@ -512,6 +614,36 @@ export const openapiHostnameOptions = (
       return data
     },
     queryKey: openapiHostnameQueryKey(options),
+  })
+
+export const openapiStaticMetricsQueryKey = (
+  options?: Options<OpenapiStaticMetricsData>
+) => createQueryKey("openapiStaticMetrics", options)
+
+/**
+ * Cloud static metrics
+ *
+ * Returns static metrics and image metadata used for framework comparison.
+ */
+export const openapiStaticMetricsOptions = (
+  options?: Options<OpenapiStaticMetricsData>
+) =>
+  queryOptions<
+    OpenapiStaticMetricsResponse,
+    DefaultError,
+    OpenapiStaticMetricsResponse,
+    ReturnType<typeof openapiStaticMetricsQueryKey>
+  >({
+    queryFn: async ({ queryKey, signal }) => {
+      const { data } = await openapiStaticMetrics({
+        ...options,
+        ...queryKey[0],
+        signal,
+        throwOnError: true,
+      })
+      return data
+    },
+    queryKey: openapiStaticMetricsQueryKey(options),
   })
 
 /**

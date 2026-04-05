@@ -28,6 +28,26 @@ export const zOpenapiErrorMessagePublic = z.object({
   details: z.string().optional(),
 })
 
+export const zOpenapiImagePlatformDigest = z.object({
+  architecture: z.string().optional(),
+  digest: z.string().optional(),
+  size: z.coerce
+    .bigint()
+    .min(BigInt("-9223372036854775808"), {
+      error: "Invalid value: Expected int64 to be >= -9223372036854775808",
+    })
+    .max(BigInt("9223372036854775807"), {
+      error: "Invalid value: Expected int64 to be <= 9223372036854775807",
+    })
+    .optional(),
+})
+
+export const zOpenapiImageManifestSummary = z.object({
+  image: z.string().optional(),
+  imageReference: z.string().optional(),
+  platforms: z.array(zOpenapiImagePlatformDigest).optional(),
+})
+
 export const zOpenapiNoteCreate = z.object({
   content: z.string().min(1),
 })
@@ -50,6 +70,113 @@ export const zOpenapiNotNullDataResponseNotePublic = z.object({
 export const zOpenapiNoteUpdate = z.object({
   id: z.string(),
   content: z.string().min(1),
+})
+
+export const zOpenapiServiceComparasion = z.object({
+  framework: z.string().optional(),
+  service: z.string().optional(),
+  runtimeMode: z.string().optional(),
+  version: z.string().optional(),
+  hostname: z.string().optional(),
+  startupReadyMs: z.coerce
+    .bigint()
+    .min(BigInt("-9223372036854775808"), {
+      error: "Invalid value: Expected int64 to be >= -9223372036854775808",
+    })
+    .max(BigInt("9223372036854775807"), {
+      error: "Invalid value: Expected int64 to be <= 9223372036854775807",
+    })
+    .optional(),
+  images: z.array(zOpenapiImageManifestSummary).optional(),
+})
+
+export const zOpenapiServiceResourceSnapshot = z.object({
+  availableProcessors: z
+    .int()
+    .min(-2147483648, {
+      error: "Invalid value: Expected int32 to be >= -2147483648",
+    })
+    .max(2147483647, {
+      error: "Invalid value: Expected int32 to be <= 2147483647",
+    })
+    .optional(),
+  maxMemoryBytes: z.coerce
+    .bigint()
+    .min(BigInt("-9223372036854775808"), {
+      error: "Invalid value: Expected int64 to be >= -9223372036854775808",
+    })
+    .max(BigInt("9223372036854775807"), {
+      error: "Invalid value: Expected int64 to be <= 9223372036854775807",
+    })
+    .optional(),
+  totalMemoryBytes: z.coerce
+    .bigint()
+    .min(BigInt("-9223372036854775808"), {
+      error: "Invalid value: Expected int64 to be >= -9223372036854775808",
+    })
+    .max(BigInt("9223372036854775807"), {
+      error: "Invalid value: Expected int64 to be <= 9223372036854775807",
+    })
+    .optional(),
+  freeMemoryBytes: z.coerce
+    .bigint()
+    .min(BigInt("-9223372036854775808"), {
+      error: "Invalid value: Expected int64 to be >= -9223372036854775808",
+    })
+    .max(BigInt("9223372036854775807"), {
+      error: "Invalid value: Expected int64 to be <= 9223372036854775807",
+    })
+    .optional(),
+  usedMemoryBytes: z.coerce
+    .bigint()
+    .min(BigInt("-9223372036854775808"), {
+      error: "Invalid value: Expected int64 to be >= -9223372036854775808",
+    })
+    .max(BigInt("9223372036854775807"), {
+      error: "Invalid value: Expected int64 to be <= 9223372036854775807",
+    })
+    .optional(),
+  usedMemoryMiB: z.coerce
+    .bigint()
+    .min(BigInt("-9223372036854775808"), {
+      error: "Invalid value: Expected int64 to be >= -9223372036854775808",
+    })
+    .max(BigInt("9223372036854775807"), {
+      error: "Invalid value: Expected int64 to be <= 9223372036854775807",
+    })
+    .optional(),
+  javaVersion: z.string().optional(),
+  vmName: z.string().optional(),
+  osName: z.string().optional(),
+  osArch: z.string().optional(),
+})
+
+export const zOpenapiServiceStartupMetrics = z.object({
+  processStartedAt: z.iso.datetime().optional(),
+  processUptimeMs: z.coerce
+    .bigint()
+    .min(BigInt("-9223372036854775808"), {
+      error: "Invalid value: Expected int64 to be >= -9223372036854775808",
+    })
+    .max(BigInt("9223372036854775807"), {
+      error: "Invalid value: Expected int64 to be <= 9223372036854775807",
+    })
+    .optional(),
+  processUptimeSeconds: z.coerce
+    .bigint()
+    .min(BigInt("-9223372036854775808"), {
+      error: "Invalid value: Expected int64 to be >= -9223372036854775808",
+    })
+    .max(BigInt("9223372036854775807"), {
+      error: "Invalid value: Expected int64 to be <= 9223372036854775807",
+    })
+    .optional(),
+})
+
+export const zOpenapiServiceLiveMetrics = z.object({
+  collectedAt: z.iso.datetime().optional(),
+  startupMetrics: zOpenapiServiceStartupMetrics.optional(),
+  resourceSnapshot: zOpenapiServiceResourceSnapshot.optional(),
 })
 
 export const zOpenapiSimpleResponse = z.object({
@@ -80,6 +207,43 @@ export const zOpenapiHttpProblem = z.object({
     }),
   detail: z.string().optional(),
   instance: z.url(),
+})
+
+export const zOpenapiMediaType = z.object({
+  type: z.string().optional(),
+  subtype: z.string().optional(),
+  parameters: z.record(z.string(), z.string()).optional(),
+  hash: z
+    .int()
+    .min(-2147483648, {
+      error: "Invalid value: Expected int32 to be >= -2147483648",
+    })
+    .max(2147483647, {
+      error: "Invalid value: Expected int32 to be <= 2147483647",
+    })
+    .optional(),
+  wildcardType: z.boolean().optional(),
+  wildcardSubtype: z.boolean().optional(),
+})
+
+export const zOpenapiOutboundSseEvent = z.object({
+  id: z.string().optional(),
+  name: z.string().optional(),
+  comment: z.string().optional(),
+  reconnectDelay: z.coerce
+    .bigint()
+    .min(BigInt("-9223372036854775808"), {
+      error: "Invalid value: Expected int64 to be >= -9223372036854775808",
+    })
+    .max(BigInt("9223372036854775807"), {
+      error: "Invalid value: Expected int64 to be <= 9223372036854775807",
+    })
+    .optional(),
+  reconnectDelaySet: z.boolean().optional(),
+  type: z.record(z.string(), z.unknown()).optional(),
+  genericType: z.record(z.string(), z.unknown()).optional(),
+  mediaType: zOpenapiMediaType.optional(),
+  data: z.unknown().optional(),
 })
 
 /**
@@ -156,6 +320,18 @@ export const zOpenapiProblemDetailPublic = z.object({
   properties: z.record(z.string(), z.unknown()).optional(),
 })
 
+export const zOpenapiSseEmitter = z.object({
+  timeout: z.coerce
+    .bigint()
+    .min(BigInt("-9223372036854775808"), {
+      error: "Invalid value: Expected int64 to be >= -9223372036854775808",
+    })
+    .max(BigInt("9223372036854775807"), {
+      error: "Invalid value: Expected int64 to be <= 9223372036854775807",
+    })
+    .optional(),
+})
+
 export const zOpenapiProblemDetail = z.object({
   type: z.url().optional(),
   title: z.string().optional(),
@@ -172,6 +348,18 @@ export const zOpenapiProblemDetail = z.object({
   instance: z.url().optional(),
   properties: z.record(z.string(), z.unknown()).optional(),
 })
+
+/**
+ * Cloud static metrics retrieved successfully
+ */
+export const zGetApiDropwizardCloudMetricsInfoResponse =
+  zOpenapiServiceComparasion
+
+/**
+ * Cloud live metrics stream started
+ */
+export const zGetApiDropwizardCloudMetricsLiveResponse =
+  zOpenapiServiceLiveMetrics
 
 /**
  * OK
@@ -208,6 +396,18 @@ export const zDeleteApiDropwizardNoteByIdPath = z.object({
  * Note deleted successfully
  */
 export const zDeleteApiDropwizardNoteByIdResponse = zOpenapiSimpleResponse
+
+/**
+ * Cloud static metrics retrieved successfully
+ */
+export const zGetApiQuarkusCloudMetricsInfoResponse = zOpenapiServiceComparasion
+
+/**
+ * Cloud live metrics stream started
+ */
+export const zGetApiQuarkusCloudMetricsLiveResponse = z.array(
+  zOpenapiOutboundSseEvent
+)
 
 /**
  * OK
@@ -266,6 +466,16 @@ export const zOpenapiUpdateResponse = zOpenapiNotNullDataResponseNotePublic
  * OK
  */
 export const zOpenapiHostnameResponse = z.string()
+
+/**
+ * Cloud live metrics stream started
+ */
+export const zOpenapiLiveMetricsStreamResponse = zOpenapiSseEmitter
+
+/**
+ * Cloud static metrics retrieved successfully
+ */
+export const zOpenapiStaticMetricsResponse = zOpenapiServiceComparasion
 
 export const zOpenapiDeletePath = z.object({
   id: z.string(),

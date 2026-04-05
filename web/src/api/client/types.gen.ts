@@ -16,6 +16,18 @@ export type OpenapiErrorMessagePublic = {
   details?: string
 }
 
+export type OpenapiImageManifestSummary = {
+  image?: string
+  imageReference?: string
+  platforms?: Array<OpenapiImagePlatformDigest>
+}
+
+export type OpenapiImagePlatformDigest = {
+  architecture?: string
+  digest?: string
+  size?: number
+}
+
 export type OpenapiNotNullDataResponseListNotePublic = {
   data: Array<OpenapiNotePublic>
   detail: string
@@ -38,6 +50,41 @@ export type OpenapiNotePublic = {
 export type OpenapiNoteUpdate = {
   id: string
   content: string
+}
+
+export type OpenapiServiceComparasion = {
+  framework?: string
+  service?: string
+  runtimeMode?: string
+  version?: string
+  hostname?: string
+  startupReadyMs?: number
+  images?: Array<OpenapiImageManifestSummary>
+}
+
+export type OpenapiServiceLiveMetrics = {
+  collectedAt?: string
+  startupMetrics?: OpenapiServiceStartupMetrics
+  resourceSnapshot?: OpenapiServiceResourceSnapshot
+}
+
+export type OpenapiServiceResourceSnapshot = {
+  availableProcessors?: number
+  maxMemoryBytes?: number
+  totalMemoryBytes?: number
+  freeMemoryBytes?: number
+  usedMemoryBytes?: number
+  usedMemoryMiB?: number
+  javaVersion?: string
+  vmName?: string
+  osName?: string
+  osArch?: string
+}
+
+export type OpenapiServiceStartupMetrics = {
+  processStartedAt?: string
+  processUptimeMs?: number
+  processUptimeSeconds?: number
 }
 
 export type OpenapiSimpleResponse = {
@@ -141,6 +188,33 @@ export type OpenapiHttpValidationProblemPublic = {
   [key: string]: unknown
 }
 
+export type OpenapiMediaType = {
+  type?: string
+  subtype?: string
+  parameters?: {
+    [key: string]: string
+  }
+  hash?: number
+  wildcardType?: boolean
+  wildcardSubtype?: boolean
+}
+
+export type OpenapiOutboundSseEvent = {
+  id?: string
+  name?: string
+  comment?: string
+  reconnectDelay?: number
+  reconnectDelaySet?: boolean
+  type?: {
+    [key: string]: unknown
+  }
+  genericType?: {
+    [key: string]: unknown
+  }
+  mediaType?: OpenapiMediaType
+  data?: unknown
+}
+
 /**
  * Validation constraint violation details
  */
@@ -188,6 +262,10 @@ export type OpenapiProblemDetailPublic = {
   }
 }
 
+export type OpenapiSseEmitter = {
+  timeout?: number
+}
+
 export type OpenapiProblemDetail = {
   type?: string
   title?: string
@@ -198,6 +276,40 @@ export type OpenapiProblemDetail = {
     [key: string]: unknown
   }
 }
+
+export type GetApiDropwizardCloudMetricsInfoData = {
+  body?: never
+  path?: never
+  query?: never
+  url: "/api/dropwizard/cloud/metrics/info"
+}
+
+export type GetApiDropwizardCloudMetricsInfoResponses = {
+  /**
+   * Cloud static metrics retrieved successfully
+   */
+  200: OpenapiServiceComparasion
+}
+
+export type GetApiDropwizardCloudMetricsInfoResponse =
+  GetApiDropwizardCloudMetricsInfoResponses[keyof GetApiDropwizardCloudMetricsInfoResponses]
+
+export type GetApiDropwizardCloudMetricsLiveData = {
+  body?: never
+  path?: never
+  query?: never
+  url: "/api/dropwizard/cloud/metrics/live"
+}
+
+export type GetApiDropwizardCloudMetricsLiveResponses = {
+  /**
+   * Cloud live metrics stream started
+   */
+  200: OpenapiServiceLiveMetrics
+}
+
+export type GetApiDropwizardCloudMetricsLiveResponse =
+  GetApiDropwizardCloudMetricsLiveResponses[keyof GetApiDropwizardCloudMetricsLiveResponses]
 
 export type GetApiDropwizardHostnameData = {
   body?: never
@@ -327,6 +439,40 @@ export type DeleteApiDropwizardNoteByIdResponses = {
 
 export type DeleteApiDropwizardNoteByIdResponse =
   DeleteApiDropwizardNoteByIdResponses[keyof DeleteApiDropwizardNoteByIdResponses]
+
+export type GetApiQuarkusCloudMetricsInfoData = {
+  body?: never
+  path?: never
+  query?: never
+  url: "/api/quarkus/cloud/metrics/info"
+}
+
+export type GetApiQuarkusCloudMetricsInfoResponses = {
+  /**
+   * Cloud static metrics retrieved successfully
+   */
+  200: OpenapiServiceComparasion
+}
+
+export type GetApiQuarkusCloudMetricsInfoResponse =
+  GetApiQuarkusCloudMetricsInfoResponses[keyof GetApiQuarkusCloudMetricsInfoResponses]
+
+export type GetApiQuarkusCloudMetricsLiveData = {
+  body?: never
+  path?: never
+  query?: never
+  url: "/api/quarkus/cloud/metrics/live"
+}
+
+export type GetApiQuarkusCloudMetricsLiveResponses = {
+  /**
+   * Cloud live metrics stream started
+   */
+  200: Array<OpenapiOutboundSseEvent>
+}
+
+export type GetApiQuarkusCloudMetricsLiveResponse =
+  GetApiQuarkusCloudMetricsLiveResponses[keyof GetApiQuarkusCloudMetricsLiveResponses]
 
 export type GetApiQuarkusHostnameData = {
   body?: never
@@ -554,6 +700,40 @@ export type OpenapiHostnameResponses = {
 
 export type OpenapiHostnameResponse =
   OpenapiHostnameResponses[keyof OpenapiHostnameResponses]
+
+export type OpenapiLiveMetricsStreamData = {
+  body?: never
+  path?: never
+  query?: never
+  url: "/api/spring/cloud/metrics/live"
+}
+
+export type OpenapiLiveMetricsStreamResponses = {
+  /**
+   * Cloud live metrics stream started
+   */
+  200: OpenapiSseEmitter
+}
+
+export type OpenapiLiveMetricsStreamResponse =
+  OpenapiLiveMetricsStreamResponses[keyof OpenapiLiveMetricsStreamResponses]
+
+export type OpenapiStaticMetricsData = {
+  body?: never
+  path?: never
+  query?: never
+  url: "/api/spring/cloud/metrics/info"
+}
+
+export type OpenapiStaticMetricsResponses = {
+  /**
+   * Cloud static metrics retrieved successfully
+   */
+  200: OpenapiServiceComparasion
+}
+
+export type OpenapiStaticMetricsResponse =
+  OpenapiStaticMetricsResponses[keyof OpenapiStaticMetricsResponses]
 
 export type OpenapiDeleteData = {
   body?: never

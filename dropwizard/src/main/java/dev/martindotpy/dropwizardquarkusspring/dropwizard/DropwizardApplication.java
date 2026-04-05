@@ -1,5 +1,7 @@
 package dev.martindotpy.dropwizardquarkusspring.dropwizard;
 
+import java.util.concurrent.atomic.AtomicLong;
+
 import org.bson.codecs.configuration.CodecRegistries;
 import org.bson.codecs.configuration.CodecRegistry;
 import org.bson.codecs.pojo.PojoCodecProvider;
@@ -10,6 +12,7 @@ import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoDatabase;
 
+import dev.martindotpy.dropwizardquarkusspring.dropwizard.core.adapter.controller.CloudComparisonController;
 import dev.martindotpy.dropwizardquarkusspring.dropwizard.core.adapter.controller.MiscellaneousController;
 import dev.martindotpy.dropwizardquarkusspring.dropwizard.core.adapter.controller.OpenApiController;
 import dev.martindotpy.dropwizardquarkusspring.dropwizard.core.adapter.repository.NoteMongoRepository;
@@ -26,6 +29,8 @@ import io.dropwizard.core.setup.Bootstrap;
 import io.dropwizard.core.setup.Environment;
 import io.dropwizard.jersey.setup.JerseyEnvironment;
 import io.dropwizard.lifecycle.Managed;
+import jakarta.ws.rs.client.Client;
+import jakarta.ws.rs.client.ClientBuilder;
 
 public class DropwizardApplication extends Application<DropwizardConfiguration> {
     public static void main(final String[] args) throws Exception {
@@ -59,6 +64,9 @@ public class DropwizardApplication extends Application<DropwizardConfiguration> 
 
         MongoClient mongoClient = MongoClients.create(mongoSettings);
 
+        // HTTP Client setup
+        Client ghcrClient = ClientBuilder.newBuilder().build();
+
         environment.lifecycle().manage(new Managed() {
             @Override
             public void start() {
@@ -67,10 +75,15 @@ public class DropwizardApplication extends Application<DropwizardConfiguration> 
             @Override
             public void stop() {
                 mongoClient.close();
+                ghcrClient.close();
             }
         });
 
         MongoDatabase database = mongoClient.getDatabase(configuration.getMongo().getDatabase());
+        AtomicLong startupReadyMs = new AtomicLong(-1L);
+
+        environment.lifecycle().addServerLifecycleListener(
+                server -> startupReadyMs.set(server.getUptimeMillis()));
 
         // Repositories and Use cases
         @SuppressWarnings("null")
@@ -84,6 +97,12 @@ public class DropwizardApplication extends Application<DropwizardConfiguration> 
         JerseyEnvironment jersey = environment.jersey();
 
         jersey.register(new MiscellaneousController());
+        jersey.register(new CloudComparisonController(
+                ghcrClient,
+                environment.getObjectMapper(),
+                getName(),
+                DropwizardApplication.class.getPackage().getImplementationVersion(),
+                startupReadyMs));
         jersey.register(new OpenApiController());
         jersey.register(
                 new NoteController(findNoteUseCase, createNoteUseCase, updateNoteUseCase, deleteNoteUseCase));
