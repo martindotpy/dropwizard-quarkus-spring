@@ -25,8 +25,11 @@ import dev.martindotpy.dropwizardquarkusspring.shared.cloud.model.GhcrTokenRespo
 import dev.martindotpy.dropwizardquarkusspring.shared.cloud.model.ImageManifestSummary;
 import dev.martindotpy.dropwizardquarkusspring.shared.cloud.model.ServiceComparasion;
 import dev.martindotpy.dropwizardquarkusspring.shared.cloud.model.ServiceLiveMetrics;
+import dev.martindotpy.dropwizardquarkusspring.shared.cloud.model.ServiceResourceSnapshot;
 import dev.martindotpy.dropwizardquarkusspring.shared.cloud.model.ServiceSnapshotFactory;
+import dev.martindotpy.dropwizardquarkusspring.shared.cloud.model.ServiceStartupMetrics;
 import io.quarkus.runtime.StartupEvent;
+import io.quarkus.runtime.annotations.RegisterForReflection;
 import io.smallrye.mutiny.Multi;
 import jakarta.enterprise.event.Observes;
 import jakarta.inject.Inject;
@@ -36,6 +39,11 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.sse.OutboundSseEvent;
 
+@RegisterForReflection(targets = {
+        ServiceLiveMetrics.class,
+        ServiceStartupMetrics.class,
+        ServiceResourceSnapshot.class
+})
 @Path("/api/quarkus/cloud")
 @Tag(name = "Cloud", description = "Endpoints for cloud performance comparison.")
 public class CloudComparisonController {
@@ -110,7 +118,7 @@ public class CloudComparisonController {
         return new OutboundSseEventImpl.BuilderImpl()
                 .name("metrics")
                 .mediaType(MediaType.APPLICATION_JSON_TYPE)
-                .data(payload)
+                .data(ServiceLiveMetrics.class, payload)
                 .build();
     }
 
