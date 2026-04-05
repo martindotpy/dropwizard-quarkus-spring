@@ -25,7 +25,7 @@ RUN ./mvnw -B dependency:go-offline
 COPY shared/src shared/src
 COPY quarkus/src quarkus/src
 
-RUN ./mvnw -pl quarkus -am package -Pnative -Dquarkus.native.container-build=false -DskipTests -B
+RUN ./mvnw -pl quarkus -am verify -Pnative -Dquarkus.native.container-build=false -DskipITs=false -B
 
 
 FROM gcr.io/distroless/base AS runtime

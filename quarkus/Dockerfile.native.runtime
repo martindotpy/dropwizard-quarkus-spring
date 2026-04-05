@@ -1,0 +1,24 @@
+ARG TZ=America/Lima
+
+FROM gcr.io/distroless/base AS runtime
+
+# Add wget for ready endpoint healthcheck
+COPY --from=busybox /lib/* /lib/
+COPY --from=busybox /lib64/* /lib64/
+COPY --from=busybox /bin/wget /bin/
+
+WORKDIR /app
+
+ARG TZ
+
+ENV TZ=${TZ}
+
+COPY --chown=185 target/*-runner ./application
+
+EXPOSE 8081
+USER 185
+
+ENTRYPOINT [ "./application", "-Dquarkus.http.host=0.0.0.0" ]
+
+HEALTHCHECK --interval=120s --timeout=5s --start-period=5s \
+    CMD ["/bin/wget", "--spider", "--timeout=5", "http://localhost:8081/hello"]

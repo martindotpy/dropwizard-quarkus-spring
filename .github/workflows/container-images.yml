@@ -237,8 +237,21 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6.0.2
 
+      - name: Set up JDK 25
+        uses: actions/setup-java@v5.0.0
+        with:
+          distribution: temurin
+          java-version: "25"
+          cache: maven
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v4.0.0
+
+      - name: Build native binary and run tests
+        run: >-
+          ./mvnw -pl quarkus -am verify -Dnative
+          -Dquarkus.native.container-build=true
+          -Dquarkus.native.container-runtime=docker -DskipITs=false -B
 
       - name: Log in to GHCR
         uses: docker/login-action@v4.1.0
@@ -251,8 +264,8 @@ jobs:
         id: build
         uses: docker/build-push-action@v7.0.0
         with:
-          context: .
-          file: quarkus/Dockerfile.native
+          context: quarkus
+          file: Dockerfile.native.runtime
           pull: true
           push: true
           platforms: linux/amd64
@@ -278,8 +291,21 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6.0.2
 
+      - name: Set up JDK 25
+        uses: actions/setup-java@v5.0.0
+        with:
+          distribution: temurin
+          java-version: "25"
+          cache: maven
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v4.0.0
+
+      - name: Build native binary and run tests
+        run: >-
+          ./mvnw -pl quarkus -am verify -Dnative
+          -Dquarkus.native.container-build=true
+          -Dquarkus.native.container-runtime=docker -DskipITs=false -B
 
       - name: Log in to GHCR
         uses: docker/login-action@v4.1.0
@@ -292,8 +318,8 @@ jobs:
         id: build
         uses: docker/build-push-action@v7.0.0
         with:
-          context: .
-          file: quarkus/Dockerfile.native
+          context: quarkus
+          file: Dockerfile.native.runtime
           pull: true
           push: true
           platforms: linux/arm64
