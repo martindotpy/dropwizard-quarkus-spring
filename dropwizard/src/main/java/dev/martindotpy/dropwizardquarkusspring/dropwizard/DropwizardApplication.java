@@ -11,6 +11,7 @@ import com.mongodb.MongoClientSettings;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoDatabase;
+import com.fasterxml.jackson.databind.SerializationFeature;
 
 import dev.martindotpy.dropwizardquarkusspring.dropwizard.core.adapter.controller.CloudComparisonController;
 import dev.martindotpy.dropwizardquarkusspring.dropwizard.core.adapter.controller.MiscellaneousController;
@@ -48,6 +49,8 @@ public class DropwizardApplication extends Application<DropwizardConfiguration> 
                 new SubstitutingSourceProvider(
                         bootstrap.getConfigurationSourceProvider(),
                         new EnvironmentVariableSubstitutor(false)));
+        bootstrap.getObjectMapper()
+                .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
     }
 
     @Override
