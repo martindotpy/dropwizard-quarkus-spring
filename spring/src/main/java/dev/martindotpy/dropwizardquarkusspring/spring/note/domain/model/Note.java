@@ -6,8 +6,6 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 
 import dev.martindotpy.dropwizardquarkusspring.shared.core.application.payload.CreateNotePayload;
 import dev.martindotpy.dropwizardquarkusspring.shared.core.application.payload.UpdateNotePayload;
@@ -20,6 +18,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import tools.jackson.databind.annotation.JsonSerialize;
+import tools.jackson.databind.ser.std.ToStringSerializer;
 
 @Document(collection = "note")
 @Getter
