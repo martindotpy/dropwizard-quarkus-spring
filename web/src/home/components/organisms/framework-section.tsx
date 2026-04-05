@@ -35,8 +35,6 @@ export function FrameworkSection({
 
   useEffect(() => {
     ;(async () => {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-expect-error
       const { stream } = await getLiveMetricsSse({
         onSseEvent: () => {
           setIsSseConnected(true)

@@ -265,7 +265,7 @@ jobs:
         uses: docker/build-push-action@v7.0.0
         with:
           context: quarkus
-          file: Dockerfile.native.runtime
+          file: quarkus/Dockerfile.native.runtime
           pull: true
           push: true
           platforms: linux/amd64
@@ -319,7 +319,7 @@ jobs:
         uses: docker/build-push-action@v7.0.0
         with:
           context: quarkus
-          file: Dockerfile.native.runtime
+          file: quarkus/Dockerfile.native.runtime
           pull: true
           push: true
           platforms: linux/arm64
