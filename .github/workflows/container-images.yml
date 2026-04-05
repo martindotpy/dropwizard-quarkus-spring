@@ -249,7 +249,7 @@ jobs:
 
       - name: Build native binary and run tests
         run: >-
-          ./mvnw -pl quarkus -am verify -Dnative
+          mvn -pl quarkus -am verify -Dnative
           -Dquarkus.native.container-build=true
           -Dquarkus.native.container-runtime=docker -DskipITs=false -B
 
@@ -303,7 +303,7 @@ jobs:
 
       - name: Build native binary and run tests
         run: >-
-          ./mvnw -pl quarkus -am verify -Dnative
+          mvn -pl quarkus -am verify -Dnative
           -Dquarkus.native.container-build=true
           -Dquarkus.native.container-runtime=docker -DskipITs=false -B
 
@@ -371,8 +371,7 @@ jobs:
       - name: Attest pushed image
         uses: actions/attest@v4.1.0
         with:
-          subject-name:
-            ${{ env.REGISTRY }}/${{ github.repository }}/quarkus-native
+          subject-name: ${{ env.REGISTRY }}/${{ github.repository }}/quarkus-native
           subject-digest: ${{ steps.manifest.outputs.digest }}
           push-to-registry: true
           create-storage-record: false
