@@ -2,10 +2,13 @@ package dev.martindotpy.dropwizardquarkusspring.shared.cloud.model;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.lang.management.GarbageCollectorMXBean;
 import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryMXBean;
 import java.lang.management.MemoryUsage;
 import java.lang.management.ThreadMXBean;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.time.Instant;
 import java.util.List;
 
@@ -17,8 +20,17 @@ import lombok.NoArgsConstructor;
 public final class ServiceSnapshotFactory {
     private static final long NOT_AVAILABLE = -1L;
     private static final double CPU_NOT_AVAILABLE = -1D;
+
     private static final String PROC_STATUS_PATH = "/proc/self/status";
     private static final String PROC_RSS_PREFIX = "VmRSS:";
+
+    private static final String CGROUP_V2_MEMORY_CURRENT_PATH = "/sys/fs/cgroup/memory.current";
+    private static final String CGROUP_V2_MEMORY_MAX_PATH = "/sys/fs/cgroup/memory.max";
+    private static final String CGROUP_V2_UNBOUNDED_MEMORY_LIMIT = "max";
+
+    private static final String CGROUP_V1_MEMORY_USAGE_PATH = "/sys/fs/cgroup/memory/memory.usage_in_bytes";
+    private static final String CGROUP_V1_MEMORY_LIMIT_PATH = "/sys/fs/cgroup/memory/memory.limit_in_bytes";
+    private static final long CGROUP_V1_UNBOUNDED_MEMORY_LIMIT = Long.MAX_VALUE - 4095L;
 
     public static final String RUNTIME_MODE = runtimeMode();
 
@@ -53,6 +65,7 @@ public final class ServiceSnapshotFactory {
 
         CpuSnapshot cpuSnapshot = cpuSnapshot();
         long processRssBytes = processRssBytes();
+        ContainerMemorySnapshot containerMemorySnapshot = containerMemorySnapshot();
 
         return new ServiceResourceSnapshot(
                 runtime.availableProcessors(),
@@ -73,6 +86,10 @@ public final class ServiceSnapshotFactory {
                 cpuSnapshot.systemCpuLoad(),
                 cpuSnapshot.processCpuTimeNs(),
                 processRssBytes,
+                containerMemorySnapshot.usedBytes(),
+                containerMemorySnapshot.limitBytes(),
+                containerMemorySnapshot.usedMiB(),
+                containerMemorySnapshot.usagePercent(),
                 System.getProperty("java.version", "unknown"),
                 System.getProperty("java.vm.name", "unknown"),
                 System.getProperty("os.name", "unknown"),
@@ -94,10 +111,10 @@ public final class ServiceSnapshotFactory {
     }
 
     private static long totalGcCollectionCount() {
-        List<java.lang.management.GarbageCollectorMXBean> gcBeans = ManagementFactory.getGarbageCollectorMXBeans();
+        List<GarbageCollectorMXBean> gcBeans = ManagementFactory.getGarbageCollectorMXBeans();
         long total = 0L;
 
-        for (java.lang.management.GarbageCollectorMXBean gcBean : gcBeans) {
+        for (GarbageCollectorMXBean gcBean : gcBeans) {
             long value = gcBean.getCollectionCount();
             if (value >= 0L) {
                 total += value;
@@ -108,10 +125,10 @@ public final class ServiceSnapshotFactory {
     }
 
     private static long totalGcCollectionTimeMs() {
-        List<java.lang.management.GarbageCollectorMXBean> gcBeans = ManagementFactory.getGarbageCollectorMXBeans();
+        List<GarbageCollectorMXBean> gcBeans = ManagementFactory.getGarbageCollectorMXBeans();
         long total = 0L;
 
-        for (java.lang.management.GarbageCollectorMXBean gcBean : gcBeans) {
+        for (GarbageCollectorMXBean gcBean : gcBeans) {
             long value = gcBean.getCollectionTime();
             if (value >= 0L) {
                 total += value;
@@ -122,7 +139,7 @@ public final class ServiceSnapshotFactory {
     }
 
     private static CpuSnapshot cpuSnapshot() {
-        java.lang.management.OperatingSystemMXBean osBean = ManagementFactory.getOperatingSystemMXBean();
+        Object osBean = ManagementFactory.getOperatingSystemMXBean();
         if (!(osBean instanceof OperatingSystemMXBean sunOsBean)) {
             return new CpuSnapshot(CPU_NOT_AVAILABLE, CPU_NOT_AVAILABLE, NOT_AVAILABLE);
         }
@@ -135,12 +152,12 @@ public final class ServiceSnapshotFactory {
     }
 
     private static long processRssBytes() {
-        java.nio.file.Path statusPath = java.nio.file.Path.of(PROC_STATUS_PATH);
-        if (!java.nio.file.Files.isReadable(statusPath)) {
+        Path statusPath = Path.of(PROC_STATUS_PATH);
+        if (!Files.isReadable(statusPath)) {
             return NOT_AVAILABLE;
         }
 
-        try (BufferedReader reader = java.nio.file.Files.newBufferedReader(statusPath)) {
+        try (BufferedReader reader = Files.newBufferedReader(statusPath)) {
             String line;
 
             while ((line = reader.readLine()) != null) {
@@ -163,6 +180,84 @@ public final class ServiceSnapshotFactory {
         }
     }
 
+    private static ContainerMemorySnapshot containerMemorySnapshot() {
+        long usedBytes = firstReadableMetric(List.of(
+                CGROUP_V2_MEMORY_CURRENT_PATH,
+                CGROUP_V1_MEMORY_USAGE_PATH));
+
+        long limitBytes = firstReadableContainerLimit(List.of(
+                CGROUP_V2_MEMORY_MAX_PATH,
+                CGROUP_V1_MEMORY_LIMIT_PATH));
+
+        long usedMiB = usedBytes >= 0L ? toMiB(usedBytes) : NOT_AVAILABLE;
+        double usagePercent = usedBytes >= 0L && limitBytes > 0L
+                ? (double) usedBytes / (double) limitBytes
+                : CPU_NOT_AVAILABLE;
+
+        return new ContainerMemorySnapshot(usedBytes, limitBytes, usedMiB, usagePercent);
+    }
+
+    private static long firstReadableMetric(List<String> paths) {
+        for (String path : paths) {
+            long value = readLongMetric(path);
+            if (value >= 0L) {
+                return value;
+            }
+        }
+
+        return NOT_AVAILABLE;
+    }
+
+    private static long firstReadableContainerLimit(List<String> paths) {
+        for (String path : paths) {
+            long value = readContainerLimit(path);
+            if (value >= 0L) {
+                return value;
+            }
+        }
+
+        return NOT_AVAILABLE;
+    }
+
+    private static long readLongMetric(String path) {
+        Path metricPath = Path.of(path);
+        if (!Files.isReadable(metricPath)) {
+            return NOT_AVAILABLE;
+        }
+
+        try {
+            String rawValue = Files.readString(metricPath).trim();
+            long parsedValue = Long.parseLong(rawValue);
+
+            return parsedValue >= 0L ? parsedValue : NOT_AVAILABLE;
+        } catch (IOException | NumberFormatException ex) {
+            return NOT_AVAILABLE;
+        }
+    }
+
+    private static long readContainerLimit(String path) {
+        Path metricPath = Path.of(path);
+        if (!Files.isReadable(metricPath)) {
+            return NOT_AVAILABLE;
+        }
+
+        try {
+            String rawValue = Files.readString(metricPath).trim();
+            if (CGROUP_V2_UNBOUNDED_MEMORY_LIMIT.equals(rawValue)) {
+                return NOT_AVAILABLE;
+            }
+
+            long parsedValue = Long.parseLong(rawValue);
+            if (parsedValue <= 0L || parsedValue >= CGROUP_V1_UNBOUNDED_MEMORY_LIMIT) {
+                return NOT_AVAILABLE;
+            }
+
+            return parsedValue;
+        } catch (IOException | NumberFormatException ex) {
+            return NOT_AVAILABLE;
+        }
+    }
+
     private static double safeCpuLoad(double value) {
         return value >= 0D ? value : CPU_NOT_AVAILABLE;
     }
@@ -176,5 +271,8 @@ public final class ServiceSnapshotFactory {
     }
 
     private record CpuSnapshot(double processCpuLoad, double systemCpuLoad, long processCpuTimeNs) {
+    }
+
+    private record ContainerMemorySnapshot(long usedBytes, long limitBytes, long usedMiB, double usagePercent) {
     }
 }
