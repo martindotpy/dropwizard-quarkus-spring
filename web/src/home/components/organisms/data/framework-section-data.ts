@@ -43,9 +43,9 @@ function createJsonGuide(
       },
       {
         path: "runtimeMode",
-        meaning: "Modo de ejecucion detectado por la JVM o imagen nativa.",
+        meaning: "Modo de ejecucion detectado por la `JVM` o imagen nativa.",
         howToRead:
-          "Permite comparar comportamiento JVM vs native en el mismo contrato JSON.",
+          "Permite comparar comportamiento `JVM` vs `native` en el mismo contrato JSON.",
       },
       {
         path: "startupReadyMs",
@@ -56,7 +56,7 @@ function createJsonGuide(
         path: "images[].platforms[]",
         meaning: "Resumen multi-arquitectura de imagenes GHCR.",
         howToRead:
-          "Cada item expone digest y size para auditar huella de despliegue.",
+          "Cada item expone `digest` y `size` para auditar huella de despliegue.",
       },
     ],
     liveEndpoint: `GET /api/${framework}/cloud/metrics/live (SSE)`,
@@ -76,7 +76,8 @@ function createJsonGuide(
       {
         path: "resourceSnapshot.processCpuLoad",
         meaning: "Carga de CPU del proceso (0.0 a 1.0).",
-        howToRead: "Multiplicar por 100 para porcentaje visible en dashboard.",
+        howToRead:
+          "Multiplicar por 100 para porcentaje visible en dashboard tecnico.",
       },
       {
         path: "resourceSnapshot.usedMemoryMiB",
@@ -104,43 +105,43 @@ export const frameworkComparisonOverview = {
   matrix: [
     {
       concern: "HTTP layer",
-      dropwizard: "JAX-RS (Jersey)",
-      quarkus: "RESTEasy Reactive",
-      spring: "Spring Web MVC",
+      dropwizard: "`JAX-RS` (`Jersey`)",
+      quarkus: "`RESTEasy Reactive`",
+      spring: "`Spring Web MVC`",
     },
     {
       concern: "Dependency injection",
-      dropwizard: "Wiring manual en Application.run()",
-      quarkus: "CDI (@Inject, @ApplicationScoped)",
-      spring: "IoC container (@Service, @Configuration)",
+      dropwizard: "Wiring manual en `DropwizardApplication.run()`",
+      quarkus: "`CDI` (`@Inject`, `@ApplicationScoped`)",
+      spring: "IoC container (`@Service`, `@Configuration`)",
     },
     {
       concern: "Mongo abstraction",
-      dropwizard: "MongoCollection explicita",
-      quarkus: "PanacheMongoRepository",
-      spring: "Spring Data MongoRepository",
+      dropwizard: "`MongoCollection` explicita",
+      quarkus: "`PanacheMongoRepository`",
+      spring: "`Spring Data MongoRepository`",
     },
     {
       concern: "SSE implementation",
-      dropwizard: "SseEventSink + virtual thread",
-      quarkus: "Mutiny Multi tick stream",
-      spring: "Reactor Flux<ServerSentEvent>",
+      dropwizard: "`SseEventSink` + virtual thread",
+      quarkus: "`Mutiny Multi` tick stream",
+      spring: "`Reactor Flux<ServerSentEvent>`",
     },
     {
       concern: "OpenAPI publication",
-      dropwizard: "Controlador dedicado que sirve openapi.json",
-      quarkus: "SmallRye OpenAPI path configurado",
-      spring: "springdoc api-docs.path configurado",
+      dropwizard: "Controlador dedicado que sirve `openapi.json`",
+      quarkus: "`SmallRye OpenAPI` path configurado",
+      spring: "`springdoc api-docs.path` configurado",
     },
     {
       concern: "Error contract",
-      dropwizard: "ErrorMessage + ValidationErrorMessage",
-      quarkus: "application/problem+json",
-      spring: "ProblemDetail + ResponseStatusException",
+      dropwizard: "`ErrorMessage` + `ValidationErrorMessage`",
+      quarkus: "`application/problem+json`",
+      spring: "`ProblemDetail` + `ResponseStatusException`",
     },
   ],
   sharedRuntimeSampler:
-    "shared/cloud/model/ServiceSnapshotFactory.java genera startupMetrics y resourceSnapshot para todos.",
+    "`shared/cloud/model/ServiceSnapshotFactory.java` genera `startupMetrics` y `resourceSnapshot` para todos.",
 }
 
 export const frameworkSectionData = {
@@ -151,28 +152,28 @@ export const frameworkSectionData = {
     getLiveMetricsSse: getApiDropwizardCloudMetricsLive,
     implementation: {
       profile:
-        "Stack centrado en wiring manual, ideal para observar cada dependencia de infraestructura.",
+        "Stack centrado en wiring manual, ideal para observar cada dependencia de infraestructura sin perder contrato `JSON`.",
       architecture: {
-        httpLayer: "JAX-RS/Jersey sobre Dropwizard",
+        httpLayer: "`JAX-RS`/`Jersey` sobre Dropwizard",
         dependencyInjection:
-          "Instanciacion manual de controladores, repositorios y casos de uso en DropwizardApplication.run().",
+          "Instanciacion manual de controladores, repositorios y casos de uso en `DropwizardApplication.run()`.",
         persistence:
-          "Repositorio concreto con MongoCollection<Note> y operaciones CRUD explicitas.",
+          "Repositorio concreto con `MongoCollection<Note>` y operaciones CRUD explicitas.",
         sseStreaming:
-          "SseEventSink + OutboundSseEvent emitido en virtual thread cada 1 segundo.",
+          "`SseEventSink` + `OutboundSseEvent` emitido en virtual thread cada 1 segundo.",
         openapi:
-          "OpenApiController expone /api/dropwizard/openapi.json desde recurso generado en build.",
+          "`OpenApiController` expone `/api/dropwizard/openapi.json` desde recurso generado en build.",
         errorModel:
-          "ErrorMessage y ValidationErrorMessage con respuestas 422 y 404.",
+          "`ErrorMessage` y `ValidationErrorMessage` con respuestas `422` y `404`.",
         startupReadyMetric:
-          "ServerLifecycleListener toma uptime del server cuando queda listo.",
+          "`ServerLifecycleListener` toma uptime del server cuando queda listo.",
         ghcrClient:
-          "jakarta.ws.rs.client.Client para token y manifest sin capa extra de abstraccion.",
+          "`jakarta.ws.rs.client.Client` para token y manifest sin capa extra de abstraccion.",
       },
       notesCrudFlow: [
-        "Controller JAX-RS -> Port de aplicacion",
-        "Use case -> NoteMongoRepository",
-        "Repository -> MongoCollection",
+        "Controller `JAX-RS` -> Port de aplicacion",
+        "Use case -> `NoteMongoRepository`",
+        "Repository -> `MongoCollection`",
       ],
       references: [
         "dropwizard/src/main/java/dev/martindotpy/dropwizardquarkusspring/dropwizard/DropwizardApplication.java",
@@ -183,7 +184,7 @@ export const frameworkSectionData = {
     },
     jsonGuide: createJsonGuide(
       "dropwizard",
-      "Fuente: server.getUptimeMillis() desde lifecycle listener."
+      "Fuente: `server.getUptimeMillis()` desde `ServerLifecycleListener`."
     ),
   },
   quarkus: {
@@ -193,26 +194,27 @@ export const frameworkSectionData = {
     getLiveMetricsSse: getApiQuarkusCloudMetricsLive,
     implementation: {
       profile:
-        "Stack con foco cloud-native y extensiones reactivas, manteniendo el mismo contrato JSON.",
+        "Stack con foco cloud-native y extensiones reactivas, manteniendo el mismo contrato `JSON`.",
       architecture: {
-        httpLayer: "RESTEasy Reactive",
-        dependencyInjection: "CDI con @Inject y beans @ApplicationScoped.",
+        httpLayer: "`RESTEasy Reactive`",
+        dependencyInjection:
+          "`CDI` con `@Inject` y beans `@ApplicationScoped`.",
         persistence:
-          "PanacheMongoRepository para CRUD con menor codigo de infraestructura.",
+          "`PanacheMongoRepository` para CRUD con menor codigo de infraestructura.",
         sseStreaming:
-          "Mutiny Multi.createFrom().ticks().every(...) para publicar eventos metrics.",
+          "`Mutiny Multi.createFrom().ticks().every(...)` para publicar eventos metrics.",
         openapi:
-          "SmallRye OpenAPI en /api/quarkus/openapi.json con filtro ProblemDetails.",
-        errorModel: "Problemas HTTP en application/problem+json.",
+          "`SmallRye OpenAPI` en `/api/quarkus/openapi.json` con filtro `ProblemDetails`.",
+        errorModel: "Problemas HTTP en `application/problem+json`.",
         startupReadyMetric:
-          "StartupEvent + lectura de io.quarkus.bootstrap.runner.Timing (fallback incluido).",
+          "`StartupEvent` + lectura de `io.quarkus.bootstrap.runner.Timing` (fallback incluido).",
         ghcrClient:
-          "MicroProfile Rest Client (@RegisterRestClient) para token y manifest.",
+          "`MicroProfile Rest Client` (`@RegisterRestClient`) para token y manifest.",
       },
       notesCrudFlow: [
-        "Controller RESTEasy -> Port de aplicacion",
-        "Use case -> NoteRepository (Panache)",
-        "Panache -> MongoDB",
+        "Controller `RESTEasy` -> Port de aplicacion",
+        "Use case -> `NoteRepository` (Panache)",
+        "Panache -> `MongoDB`",
       ],
       references: [
         "quarkus/src/main/java/dev/martindotpy/dropwizardquarkusspring/quarkus/core/adapter/controller/MetricsController.java",
@@ -223,7 +225,7 @@ export const frameworkSectionData = {
     },
     jsonGuide: createJsonGuide(
       "quarkus",
-      "Fuente: StartupEvent + Timing.bootStartTime via reflection."
+      "Fuente: `StartupEvent` + `Timing.bootStartTime` via reflection."
     ),
   },
   spring: {
@@ -232,26 +234,26 @@ export const frameworkSectionData = {
     getLiveMetricsSse: getApiSpringCloudMetricsLive,
     implementation: {
       profile:
-        "Stack empresarial basado en IoC + Spring Data, con salida de metricas equivalente.",
+        "Stack empresarial basado en IoC + Spring Data, con salida de metricas equivalente sobre `JSON`.",
       architecture: {
-        httpLayer: "@RestController + Spring MVC annotations",
+        httpLayer: "`@RestController` + `Spring MVC` annotations",
         dependencyInjection:
-          "Inyeccion por constructor con beans del contenedor Spring.",
-        persistence: "MongoRepository<ObjectId> de Spring Data MongoDB.",
+          "Inyeccion por constructor con beans del contenedor `Spring`.",
+        persistence: "`MongoRepository<ObjectId>` de `Spring Data MongoDB`.",
         sseStreaming:
-          "Flux.interval(...) que emite ServerSentEvent<ServiceLiveMetrics>.",
-        openapi: "springdoc api-docs.path=/api/spring/openapi.json.",
+          "`Flux.interval(...)` que emite `ServerSentEvent<ServiceLiveMetrics>`.",
+        openapi: "`springdoc api-docs.path=/api/spring/openapi.json`.",
         errorModel:
-          "ProblemDetail y ResponseStatusException para errores de validacion y negocio.",
+          "`ProblemDetail` y `ResponseStatusException` para errores de validacion y negocio.",
         startupReadyMetric:
-          "ApplicationReadyEvent.getTimeTaken() capturado por StartupReadyTracker.",
+          "`ApplicationReadyEvent.getTimeTaken()` capturado por `StartupReadyTracker`.",
         ghcrClient:
-          "RestClient + HttpServiceProxyFactory para clientes tipados.",
+          "`RestClient` + `HttpServiceProxyFactory` para clientes tipados.",
       },
       notesCrudFlow: [
-        "Controller MVC -> Port de aplicacion",
-        "Use case -> NoteRepository (Spring Data)",
-        "MongoRepository -> MongoDB",
+        "Controller `MVC` -> Port de aplicacion",
+        "Use case -> `NoteRepository` (Spring Data)",
+        "`MongoRepository` -> `MongoDB`",
       ],
       references: [
         "spring/src/main/java/dev/martindotpy/dropwizardquarkusspring/spring/core/adapter/controller/MetricsController.java",
@@ -262,7 +264,7 @@ export const frameworkSectionData = {
     },
     jsonGuide: createJsonGuide(
       "spring",
-      "Fuente: ApplicationReadyEvent.timeTaken en StartupReadyTracker."
+      "Fuente: `ApplicationReadyEvent.timeTaken` en `StartupReadyTracker`."
     ),
   },
 } satisfies FrameworkSection

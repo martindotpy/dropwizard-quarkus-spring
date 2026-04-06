@@ -2,6 +2,7 @@ import type {
   OpenapiServiceComparison,
   OpenapiServiceLiveMetrics,
 } from "@/api/client"
+import { InlineCodeText } from "@/home/components/atoms/inline-code-text"
 import type { frameworkSectionData } from "@/home/components/organisms/data/framework-section-data"
 import { useQuery } from "@tanstack/react-query"
 import { useEffect, useState } from "react"
@@ -214,11 +215,11 @@ export function FrameworkSection({
         </div>
 
         <p className="text-muted-foreground text-sm leading-relaxed">
-          {implementation.profile}
+          <InlineCodeText text={implementation.profile} />
         </p>
       </header>
 
-      <div className="grid gap-3 xl:grid-cols-2 *:min-w-0">
+      <div className="grid gap-3 *:min-w-0 xl:grid-cols-2">
         <article className="border-border/70 bg-background/85 rounded-xl border p-3">
           <h3 className="font-mono text-xs font-semibold tracking-[0.06em] uppercase">
             Metricas clave
@@ -286,14 +287,16 @@ export function FrameworkSection({
                 <dt className="text-muted-foreground">
                   {architectureLabels[key as keyof typeof architectureLabels]}
                 </dt>
-                <dd>{value}</dd>
+                <dd>
+                  <InlineCodeText text={value} />
+                </dd>
               </div>
             ))}
           </dl>
         </article>
       </div>
 
-      <div className="grid gap-3 xl:grid-cols-2 *:min-w-0">
+      <div className="grid gap-3 *:min-w-0 xl:grid-cols-2">
         <article className="border-border/70 bg-background/85 rounded-xl border p-3">
           <h3 className="font-mono text-xs font-semibold tracking-[0.06em] uppercase">
             Flujo CRUD de notas
@@ -305,7 +308,7 @@ export function FrameworkSection({
                 key={step}
                 className="border-border/60 bg-card/65 rounded-md border px-2 py-1.5"
               >
-                {step}
+                <InlineCodeText text={step} />
               </li>
             ))}
           </ol>
@@ -334,7 +337,7 @@ export function FrameworkSection({
           Guia de lectura JSON
         </h3>
 
-        <div className="mt-3 grid gap-3 xl:grid-cols-2 *:min-w-0">
+        <div className="mt-3 grid gap-3 *:min-w-0 xl:grid-cols-2">
           <div className="space-y-2">
             <h4 className="text-xs font-semibold tracking-wide">
               Info endpoint
@@ -349,8 +352,12 @@ export function FrameworkSection({
                   className="border-border/60 bg-card/65 rounded-md border px-2 py-1.5"
                 >
                   <p className="font-mono">{field.path}</p>
-                  <p className="text-muted-foreground mt-1">{field.meaning}</p>
-                  <p className="mt-1">{field.howToRead}</p>
+                  <p className="text-muted-foreground mt-1">
+                    <InlineCodeText text={field.meaning} />
+                  </p>
+                  <p className="mt-1">
+                    <InlineCodeText text={field.howToRead} />
+                  </p>
                 </li>
               ))}
             </ul>
@@ -370,8 +377,12 @@ export function FrameworkSection({
                   className="border-border/60 bg-card/65 rounded-md border px-2 py-1.5"
                 >
                   <p className="font-mono">{field.path}</p>
-                  <p className="text-muted-foreground mt-1">{field.meaning}</p>
-                  <p className="mt-1">{field.howToRead}</p>
+                  <p className="text-muted-foreground mt-1">
+                    <InlineCodeText text={field.meaning} />
+                  </p>
+                  <p className="mt-1">
+                    <InlineCodeText text={field.howToRead} />
+                  </p>
                 </li>
               ))}
             </ul>
@@ -379,7 +390,7 @@ export function FrameworkSection({
         </div>
       </article>
 
-      <div className="grid gap-3 xl:grid-cols-2 *:min-w-0">
+      <div className="grid gap-3 *:min-w-0 xl:grid-cols-2">
         <article className="space-y-2">
           <h3 className="font-mono text-xs font-semibold tracking-[0.06em] uppercase">
             JSON estatico

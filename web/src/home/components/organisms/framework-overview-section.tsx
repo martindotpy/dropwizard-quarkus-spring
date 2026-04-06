@@ -1,3 +1,4 @@
+import { InlineCodeText } from "@/home/components/atoms/inline-code-text"
 import { frameworkComparisonOverview } from "@/home/components/organisms/data/framework-section-data"
 
 export function FrameworkOverviewSection() {
@@ -58,15 +59,21 @@ export function FrameworkOverviewSection() {
             <dl className="mt-3 space-y-2 text-xs leading-relaxed">
               <div className="grid grid-cols-[6.5rem_1fr] gap-2">
                 <dt className="text-muted-foreground">Dropwizard</dt>
-                <dd>{row.dropwizard}</dd>
+                <dd>
+                  <InlineCodeText text={row.dropwizard} />
+                </dd>
               </div>
               <div className="grid grid-cols-[6.5rem_1fr] gap-2">
                 <dt className="text-muted-foreground">Quarkus</dt>
-                <dd>{row.quarkus}</dd>
+                <dd>
+                  <InlineCodeText text={row.quarkus} />
+                </dd>
               </div>
               <div className="grid grid-cols-[6.5rem_1fr] gap-2">
                 <dt className="text-muted-foreground">Spring</dt>
-                <dd>{row.spring}</dd>
+                <dd>
+                  <InlineCodeText text={row.spring} />
+                </dd>
               </div>
             </dl>
           </article>
@@ -74,7 +81,7 @@ export function FrameworkOverviewSection() {
       </div>
 
       <p className="text-muted-foreground border-border/70 bg-background/70 rounded-xl border p-3 text-xs leading-relaxed">
-        {sharedRuntimeSampler}
+        <InlineCodeText text={sharedRuntimeSampler} />
       </p>
     </section>
   )
