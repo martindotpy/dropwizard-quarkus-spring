@@ -6,12 +6,12 @@ import org.bson.codecs.configuration.CodecRegistries;
 import org.bson.codecs.configuration.CodecRegistry;
 import org.bson.codecs.pojo.PojoCodecProvider;
 
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.mongodb.ConnectionString;
 import com.mongodb.MongoClientSettings;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoDatabase;
-import com.fasterxml.jackson.databind.SerializationFeature;
 
 import dev.martindotpy.dropwizardquarkusspring.dropwizard.core.adapter.controller.MetricsController;
 import dev.martindotpy.dropwizardquarkusspring.dropwizard.core.adapter.controller.MiscellaneousController;
@@ -19,12 +19,12 @@ import dev.martindotpy.dropwizardquarkusspring.dropwizard.core.adapter.controlle
 import dev.martindotpy.dropwizardquarkusspring.dropwizard.core.adapter.repository.NoteMongoRepository;
 import dev.martindotpy.dropwizardquarkusspring.dropwizard.note.adapter.controller.NoteController;
 import dev.martindotpy.dropwizardquarkusspring.dropwizard.note.application.mapper.NoteMapper;
+import dev.martindotpy.dropwizardquarkusspring.dropwizard.note.application.mapper.NoteMapperImpl;
 import dev.martindotpy.dropwizardquarkusspring.dropwizard.note.application.usecase.CreateNoteUseCase;
 import dev.martindotpy.dropwizardquarkusspring.dropwizard.note.application.usecase.DeleteNoteUseCase;
 import dev.martindotpy.dropwizardquarkusspring.dropwizard.note.application.usecase.FindNoteUseCase;
 import dev.martindotpy.dropwizardquarkusspring.dropwizard.note.application.usecase.UpdateNoteUseCase;
 import dev.martindotpy.dropwizardquarkusspring.dropwizard.note.domain.model.Note;
-import org.mapstruct.factory.Mappers;
 import io.dropwizard.configuration.EnvironmentVariableSubstitutor;
 import io.dropwizard.configuration.SubstitutingSourceProvider;
 import io.dropwizard.core.Application;
@@ -93,8 +93,7 @@ public class DropwizardApplication extends Application<DropwizardConfiguration> 
         // Repositories and Use cases
         @SuppressWarnings("null")
         NoteMongoRepository noteRepository = new NoteMongoRepository(database.getCollection("note", Note.class));
-        @SuppressWarnings("null")
-        NoteMapper noteMapper = Mappers.getMapper(NoteMapper.class);
+        NoteMapper noteMapper = new NoteMapperImpl();
 
         FindNoteUseCase findNoteUseCase = new FindNoteUseCase(noteRepository);
         CreateNoteUseCase createNoteUseCase = new CreateNoteUseCase(noteRepository, noteMapper);
