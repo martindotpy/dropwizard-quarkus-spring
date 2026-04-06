@@ -50,7 +50,7 @@
       "type": "java",
       "request": "launch",
       "cwd": "${workspaceFolder}/spring",
-      "mainClass": "dev.martindotpy.dropwizardquarkusspring.spring.SpringCloudApplication",
+      "mainClass": "dev.martindotpy.dropwizardquarkusspring.spring.SpringApplication",
       "args": ["--spring.profiles.active=dev"],
       "projectName": "spring",
       "presentation": {
