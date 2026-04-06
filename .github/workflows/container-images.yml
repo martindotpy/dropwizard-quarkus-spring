@@ -248,6 +248,10 @@ jobs:
         uses: docker/setup-buildx-action@v4.0.0
 
       - name: Build native binary and run tests
+        env:
+          QUARKUS_MONGODB_CREDENTIALS_USERNAME: admin
+          QUARKUS_MONGODB_CREDENTIALS_PASSWORD: admin
+          QUARKUS_MONGODB_CREDENTIALS_AUTH_SOURCE: admin
         run: >-
           mvn -pl quarkus -am verify -Dnative
           -Dquarkus.native.container-build=true
@@ -302,6 +306,10 @@ jobs:
         uses: docker/setup-buildx-action@v4.0.0
 
       - name: Build native binary and run tests
+        env:
+          QUARKUS_MONGODB_CREDENTIALS_USERNAME: admin
+          QUARKUS_MONGODB_CREDENTIALS_PASSWORD: admin
+          QUARKUS_MONGODB_CREDENTIALS_AUTH_SOURCE: admin
         run: >-
           mvn -pl quarkus -am verify -Dnative
           -Dquarkus.native.container-build=true
