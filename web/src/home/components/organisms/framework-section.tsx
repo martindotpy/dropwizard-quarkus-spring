@@ -89,6 +89,7 @@ function formatTimestamp(value?: number): string {
 
 export function FrameworkSection({
   title,
+  icon: Icon,
   serviceInformationQueryOptions,
   getLiveMetricsSse,
   implementation,
@@ -200,8 +201,17 @@ export function FrameworkSection({
     <section className="not-prose border-border/80 bg-card/45 min-w-0 space-y-4 rounded-2xl border p-4 shadow-sm backdrop-blur-sm lg:p-5">
       <header className="space-y-2">
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <h2 className="font-mono text-lg font-semibold tracking-tight lg:text-xl">
-            {title}
+          <h2 className="flex items-center gap-1 font-mono text-lg font-semibold tracking-tight lg:text-xl">
+            {Icon && (
+              <Icon
+                title={`${title} logo`}
+                className="mr-2 h-6 w-auto"
+                width={24}
+                height={24}
+              />
+            )}
+
+            <span>{title}</span>
           </h2>
 
           <div className="flex flex-wrap items-center gap-2 text-xs">

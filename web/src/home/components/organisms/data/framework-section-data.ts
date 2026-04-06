@@ -8,6 +8,9 @@ import {
   getApiQuarkusCloudMetricsInfoOptions,
   getApiSpringCloudMetricsInfoOptions,
 } from "@/api/client/@tanstack/react-query.gen"
+import Dropwizard from "@assets/svg/dropwizard.svg?react"
+import Quarkus from "@assets/svg/quarkus.svg?react"
+import Spring from "@assets/svg/spring.svg?react"
 
 export type Framework = "dropwizard" | "quarkus" | "spring"
 
@@ -147,6 +150,7 @@ export const frameworkComparisonOverview = {
 export const frameworkSectionData = {
   dropwizard: {
     title: "Dropwizard",
+    icon: Dropwizard,
     serviceInformationQueryOptions: () =>
       getApiDropwizardCloudMetricsInfoOptions(),
     getLiveMetricsSse: getApiDropwizardCloudMetricsLive,
@@ -189,6 +193,7 @@ export const frameworkSectionData = {
   },
   quarkus: {
     title: "Quarkus",
+    icon: Quarkus,
     serviceInformationQueryOptions: () =>
       getApiQuarkusCloudMetricsInfoOptions(),
     getLiveMetricsSse: getApiQuarkusCloudMetricsLive,
@@ -230,6 +235,7 @@ export const frameworkSectionData = {
   },
   spring: {
     title: "Spring",
+    icon: Spring,
     serviceInformationQueryOptions: () => getApiSpringCloudMetricsInfoOptions(),
     getLiveMetricsSse: getApiSpringCloudMetricsLive,
     implementation: {
