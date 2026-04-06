@@ -10,23 +10,23 @@ import { client } from "../client.gen"
 import {
   deleteApiDropwizardNoteById,
   deleteApiQuarkusNoteById,
+  deleteApiSpringNoteById,
   getApiDropwizardCloudMetricsInfo,
   getApiDropwizardHostname,
   getApiDropwizardNote,
   getApiQuarkusCloudMetricsInfo,
   getApiQuarkusHostname,
   getApiQuarkusNote,
-  openapiCreate,
-  openapiDelete,
-  openapiGetAll,
-  openapiHostname,
-  openapiStaticMetrics,
-  openapiUpdate,
+  getApiSpringCloudMetricsInfo,
+  getApiSpringHostname,
+  getApiSpringNote,
   type Options,
   postApiDropwizardNote,
   postApiQuarkusNote,
+  postApiSpringNote,
   putApiDropwizardNote,
   putApiQuarkusNote,
+  putApiSpringNote,
 } from "../sdk.gen"
 import type {
   DeleteApiDropwizardNoteByIdData,
@@ -35,6 +35,9 @@ import type {
   DeleteApiQuarkusNoteByIdData,
   DeleteApiQuarkusNoteByIdError,
   DeleteApiQuarkusNoteByIdResponse,
+  DeleteApiSpringNoteByIdData,
+  DeleteApiSpringNoteByIdError,
+  DeleteApiSpringNoteByIdResponse,
   GetApiDropwizardCloudMetricsInfoData,
   GetApiDropwizardCloudMetricsInfoResponse,
   GetApiDropwizardHostnameData,
@@ -47,33 +50,30 @@ import type {
   GetApiQuarkusHostnameResponse,
   GetApiQuarkusNoteData,
   GetApiQuarkusNoteResponse,
-  OpenapiCreateData,
-  OpenapiCreateError,
-  OpenapiCreateResponse,
-  OpenapiDeleteData,
-  OpenapiDeleteError,
-  OpenapiDeleteResponse,
-  OpenapiGetAllData,
-  OpenapiGetAllResponse,
-  OpenapiHostnameData,
-  OpenapiHostnameResponse,
-  OpenapiStaticMetricsData,
-  OpenapiStaticMetricsResponse,
-  OpenapiUpdateData,
-  OpenapiUpdateError,
-  OpenapiUpdateResponse,
+  GetApiSpringCloudMetricsInfoData,
+  GetApiSpringCloudMetricsInfoResponse,
+  GetApiSpringHostnameData,
+  GetApiSpringHostnameResponse,
+  GetApiSpringNoteData,
+  GetApiSpringNoteResponse,
   PostApiDropwizardNoteData,
   PostApiDropwizardNoteError,
   PostApiDropwizardNoteResponse,
   PostApiQuarkusNoteData,
   PostApiQuarkusNoteError,
   PostApiQuarkusNoteResponse,
+  PostApiSpringNoteData,
+  PostApiSpringNoteError,
+  PostApiSpringNoteResponse,
   PutApiDropwizardNoteData,
   PutApiDropwizardNoteError,
   PutApiDropwizardNoteResponse,
   PutApiQuarkusNoteData,
   PutApiQuarkusNoteError,
   PutApiQuarkusNoteResponse,
+  PutApiSpringNoteData,
+  PutApiSpringNoteError,
+  PutApiSpringNoteResponse,
 } from "../types.gen"
 
 export type QueryKey<TOptions extends Options> = [
@@ -329,6 +329,8 @@ export const getApiQuarkusHostnameQueryKey = (
 
 /**
  * Hostname
+ *
+ * Returns the hostname of the server.
  */
 export const getApiQuarkusHostnameOptions = (
   options?: Options<GetApiQuarkusHostnameData>
@@ -468,23 +470,26 @@ export const deleteApiQuarkusNoteByIdMutation = (
   return mutationOptions
 }
 
-export const openapiGetAllQueryKey = (options?: Options<OpenapiGetAllData>) =>
-  createQueryKey("openapiGetAll", options)
+export const getApiSpringNoteQueryKey = (
+  options?: Options<GetApiSpringNoteData>
+) => createQueryKey("getApiSpringNote", options)
 
 /**
  * Get all
  *
  * Retrieve all notes.
  */
-export const openapiGetAllOptions = (options?: Options<OpenapiGetAllData>) =>
+export const getApiSpringNoteOptions = (
+  options?: Options<GetApiSpringNoteData>
+) =>
   queryOptions<
-    OpenapiGetAllResponse,
+    GetApiSpringNoteResponse,
     DefaultError,
-    OpenapiGetAllResponse,
-    ReturnType<typeof openapiGetAllQueryKey>
+    GetApiSpringNoteResponse,
+    ReturnType<typeof getApiSpringNoteQueryKey>
   >({
     queryFn: async ({ queryKey, signal }) => {
-      const { data } = await openapiGetAll({
+      const { data } = await getApiSpringNote({
         ...options,
         ...queryKey[0],
         signal,
@@ -492,7 +497,7 @@ export const openapiGetAllOptions = (options?: Options<OpenapiGetAllData>) =>
       })
       return data
     },
-    queryKey: openapiGetAllQueryKey(options),
+    queryKey: getApiSpringNoteQueryKey(options),
   })
 
 /**
@@ -500,20 +505,20 @@ export const openapiGetAllOptions = (options?: Options<OpenapiGetAllData>) =>
  *
  * Create a new note.
  */
-export const openapiCreateMutation = (
-  options?: Partial<Options<OpenapiCreateData>>
+export const postApiSpringNoteMutation = (
+  options?: Partial<Options<PostApiSpringNoteData>>
 ): UseMutationOptions<
-  OpenapiCreateResponse,
-  OpenapiCreateError,
-  Options<OpenapiCreateData>
+  PostApiSpringNoteResponse,
+  PostApiSpringNoteError,
+  Options<PostApiSpringNoteData>
 > => {
   const mutationOptions: UseMutationOptions<
-    OpenapiCreateResponse,
-    OpenapiCreateError,
-    Options<OpenapiCreateData>
+    PostApiSpringNoteResponse,
+    PostApiSpringNoteError,
+    Options<PostApiSpringNoteData>
   > = {
     mutationFn: async (fnOptions) => {
-      const { data } = await openapiCreate({
+      const { data } = await postApiSpringNote({
         ...options,
         ...fnOptions,
         throwOnError: true,
@@ -529,20 +534,20 @@ export const openapiCreateMutation = (
  *
  * Update an existing note.
  */
-export const openapiUpdateMutation = (
-  options?: Partial<Options<OpenapiUpdateData>>
+export const putApiSpringNoteMutation = (
+  options?: Partial<Options<PutApiSpringNoteData>>
 ): UseMutationOptions<
-  OpenapiUpdateResponse,
-  OpenapiUpdateError,
-  Options<OpenapiUpdateData>
+  PutApiSpringNoteResponse,
+  PutApiSpringNoteError,
+  Options<PutApiSpringNoteData>
 > => {
   const mutationOptions: UseMutationOptions<
-    OpenapiUpdateResponse,
-    OpenapiUpdateError,
-    Options<OpenapiUpdateData>
+    PutApiSpringNoteResponse,
+    PutApiSpringNoteError,
+    Options<PutApiSpringNoteData>
   > = {
     mutationFn: async (fnOptions) => {
-      const { data } = await openapiUpdate({
+      const { data } = await putApiSpringNote({
         ...options,
         ...fnOptions,
         throwOnError: true,
@@ -553,26 +558,26 @@ export const openapiUpdateMutation = (
   return mutationOptions
 }
 
-export const openapiHostnameQueryKey = (
-  options?: Options<OpenapiHostnameData>
-) => createQueryKey("openapiHostname", options)
+export const getApiSpringHostnameQueryKey = (
+  options?: Options<GetApiSpringHostnameData>
+) => createQueryKey("getApiSpringHostname", options)
 
 /**
  * Hostname
  *
  * Returns the hostname of the server.
  */
-export const openapiHostnameOptions = (
-  options?: Options<OpenapiHostnameData>
+export const getApiSpringHostnameOptions = (
+  options?: Options<GetApiSpringHostnameData>
 ) =>
   queryOptions<
-    OpenapiHostnameResponse,
+    GetApiSpringHostnameResponse,
     DefaultError,
-    OpenapiHostnameResponse,
-    ReturnType<typeof openapiHostnameQueryKey>
+    GetApiSpringHostnameResponse,
+    ReturnType<typeof getApiSpringHostnameQueryKey>
   >({
     queryFn: async ({ queryKey, signal }) => {
-      const { data } = await openapiHostname({
+      const { data } = await getApiSpringHostname({
         ...options,
         ...queryKey[0],
         signal,
@@ -580,29 +585,29 @@ export const openapiHostnameOptions = (
       })
       return data
     },
-    queryKey: openapiHostnameQueryKey(options),
+    queryKey: getApiSpringHostnameQueryKey(options),
   })
 
-export const openapiStaticMetricsQueryKey = (
-  options?: Options<OpenapiStaticMetricsData>
-) => createQueryKey("openapiStaticMetrics", options)
+export const getApiSpringCloudMetricsInfoQueryKey = (
+  options?: Options<GetApiSpringCloudMetricsInfoData>
+) => createQueryKey("getApiSpringCloudMetricsInfo", options)
 
 /**
  * Cloud static metrics
  *
  * Returns static metrics and image metadata used for framework comparison.
  */
-export const openapiStaticMetricsOptions = (
-  options?: Options<OpenapiStaticMetricsData>
+export const getApiSpringCloudMetricsInfoOptions = (
+  options?: Options<GetApiSpringCloudMetricsInfoData>
 ) =>
   queryOptions<
-    OpenapiStaticMetricsResponse,
+    GetApiSpringCloudMetricsInfoResponse,
     DefaultError,
-    OpenapiStaticMetricsResponse,
-    ReturnType<typeof openapiStaticMetricsQueryKey>
+    GetApiSpringCloudMetricsInfoResponse,
+    ReturnType<typeof getApiSpringCloudMetricsInfoQueryKey>
   >({
     queryFn: async ({ queryKey, signal }) => {
-      const { data } = await openapiStaticMetrics({
+      const { data } = await getApiSpringCloudMetricsInfo({
         ...options,
         ...queryKey[0],
         signal,
@@ -610,7 +615,7 @@ export const openapiStaticMetricsOptions = (
       })
       return data
     },
-    queryKey: openapiStaticMetricsQueryKey(options),
+    queryKey: getApiSpringCloudMetricsInfoQueryKey(options),
   })
 
 /**
@@ -618,20 +623,20 @@ export const openapiStaticMetricsOptions = (
  *
  * Delete an existing note.
  */
-export const openapiDeleteMutation = (
-  options?: Partial<Options<OpenapiDeleteData>>
+export const deleteApiSpringNoteByIdMutation = (
+  options?: Partial<Options<DeleteApiSpringNoteByIdData>>
 ): UseMutationOptions<
-  OpenapiDeleteResponse,
-  OpenapiDeleteError,
-  Options<OpenapiDeleteData>
+  DeleteApiSpringNoteByIdResponse,
+  DeleteApiSpringNoteByIdError,
+  Options<DeleteApiSpringNoteByIdData>
 > => {
   const mutationOptions: UseMutationOptions<
-    OpenapiDeleteResponse,
-    OpenapiDeleteError,
-    Options<OpenapiDeleteData>
+    DeleteApiSpringNoteByIdResponse,
+    DeleteApiSpringNoteByIdError,
+    Options<DeleteApiSpringNoteByIdData>
   > = {
     mutationFn: async (fnOptions) => {
-      const { data } = await openapiDelete({
+      const { data } = await deleteApiSpringNoteById({
         ...options,
         ...fnOptions,
         throwOnError: true,

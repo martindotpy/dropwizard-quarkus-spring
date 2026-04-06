@@ -72,7 +72,7 @@ export const zOpenapiNoteUpdate = z.object({
   content: z.string().min(1),
 })
 
-export const zOpenapiServiceComparasion = z.object({
+export const zOpenapiServiceComparison = z.object({
   framework: z.string().optional(),
   service: z.string().optional(),
   runtimeMode: z.string().optional(),
@@ -209,42 +209,7 @@ export const zOpenapiHttpProblem = z.object({
   instance: z.url(),
 })
 
-export const zOpenapiMediaType = z.object({
-  type: z.string().optional(),
-  subtype: z.string().optional(),
-  parameters: z.record(z.string(), z.string()).optional(),
-  hash: z
-    .int()
-    .min(-2147483648, {
-      error: "Invalid value: Expected int32 to be >= -2147483648",
-    })
-    .max(2147483647, {
-      error: "Invalid value: Expected int32 to be <= 2147483647",
-    })
-    .optional(),
-  wildcardType: z.boolean().optional(),
-  wildcardSubtype: z.boolean().optional(),
-})
-
-export const zOpenapiOutboundSseEvent = z.object({
-  id: z.string().optional(),
-  name: z.string().optional(),
-  comment: z.string().optional(),
-  reconnectDelay: z.coerce
-    .bigint()
-    .min(BigInt("-9223372036854775808"), {
-      error: "Invalid value: Expected int64 to be >= -9223372036854775808",
-    })
-    .max(BigInt("9223372036854775807"), {
-      error: "Invalid value: Expected int64 to be <= 9223372036854775807",
-    })
-    .optional(),
-  reconnectDelaySet: z.boolean().optional(),
-  type: z.record(z.string(), z.unknown()).optional(),
-  genericType: z.record(z.string(), z.unknown()).optional(),
-  mediaType: zOpenapiMediaType.optional(),
-  data: z.unknown().optional(),
-})
+export const zOpenapiInstant = z.iso.datetime()
 
 /**
  * Validation constraint violation details
@@ -320,18 +285,6 @@ export const zOpenapiProblemDetailPublic = z.object({
   properties: z.record(z.string(), z.unknown()).optional(),
 })
 
-export const zOpenapiSseEmitter = z.object({
-  timeout: z.coerce
-    .bigint()
-    .min(BigInt("-9223372036854775808"), {
-      error: "Invalid value: Expected int64 to be >= -9223372036854775808",
-    })
-    .max(BigInt("9223372036854775807"), {
-      error: "Invalid value: Expected int64 to be <= 9223372036854775807",
-    })
-    .optional(),
-})
-
 export const zOpenapiProblemDetail = z.object({
   type: z.url().optional(),
   title: z.string().optional(),
@@ -353,7 +306,7 @@ export const zOpenapiProblemDetail = z.object({
  * Cloud static metrics retrieved successfully
  */
 export const zGetApiDropwizardCloudMetricsInfoResponse =
-  zOpenapiServiceComparasion
+  zOpenapiServiceComparison
 
 /**
  * Cloud live metrics stream started
@@ -400,14 +353,12 @@ export const zDeleteApiDropwizardNoteByIdResponse = zOpenapiSimpleResponse
 /**
  * Cloud static metrics retrieved successfully
  */
-export const zGetApiQuarkusCloudMetricsInfoResponse = zOpenapiServiceComparasion
+export const zGetApiQuarkusCloudMetricsInfoResponse = zOpenapiServiceComparison
 
 /**
  * Cloud live metrics stream started
  */
-export const zGetApiQuarkusCloudMetricsLiveResponse = z.array(
-  zOpenapiOutboundSseEvent
-)
+export const zGetApiQuarkusCloudMetricsLiveResponse = zOpenapiServiceLiveMetrics
 
 /**
  * OK
@@ -446,42 +397,43 @@ export const zDeleteApiQuarkusNoteByIdResponse = zOpenapiSimpleResponse
 /**
  * Notes retrieved successfully
  */
-export const zOpenapiGetAllResponse = zOpenapiNotNullDataResponseListNotePublic
+export const zGetApiSpringNoteResponse =
+  zOpenapiNotNullDataResponseListNotePublic
 
-export const zOpenapiCreateBody = zOpenapiNoteCreate
+export const zPostApiSpringNoteBody = zOpenapiNoteCreate
 
 /**
  * Note created successfully
  */
-export const zOpenapiCreateResponse = zOpenapiNotNullDataResponseNotePublic
+export const zPostApiSpringNoteResponse = zOpenapiNotNullDataResponseNotePublic
 
-export const zOpenapiUpdateBody = zOpenapiNoteUpdate
+export const zPutApiSpringNoteBody = zOpenapiNoteUpdate
 
 /**
  * Note updated successfully
  */
-export const zOpenapiUpdateResponse = zOpenapiNotNullDataResponseNotePublic
+export const zPutApiSpringNoteResponse = zOpenapiNotNullDataResponseNotePublic
 
 /**
  * OK
  */
-export const zOpenapiHostnameResponse = z.string()
+export const zGetApiSpringHostnameResponse = z.string()
 
 /**
  * Cloud live metrics stream started
  */
-export const zOpenapiLiveMetricsStreamResponse = zOpenapiSseEmitter
+export const zGetApiSpringCloudMetricsLiveResponse = zOpenapiServiceLiveMetrics
 
 /**
  * Cloud static metrics retrieved successfully
  */
-export const zOpenapiStaticMetricsResponse = zOpenapiServiceComparasion
+export const zGetApiSpringCloudMetricsInfoResponse = zOpenapiServiceComparison
 
-export const zOpenapiDeletePath = z.object({
+export const zDeleteApiSpringNoteByIdPath = z.object({
   id: z.string(),
 })
 
 /**
  * Note deleted successfully
  */
-export const zOpenapiDeleteResponse = zOpenapiSimpleResponse
+export const zDeleteApiSpringNoteByIdResponse = zOpenapiSimpleResponse

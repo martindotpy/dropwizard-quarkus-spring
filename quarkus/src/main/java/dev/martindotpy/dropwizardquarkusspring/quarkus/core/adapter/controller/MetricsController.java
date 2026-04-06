@@ -9,10 +9,11 @@ import java.util.concurrent.TimeUnit;
 
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.openapi.annotations.Operation;
+import org.eclipse.microprofile.openapi.annotations.media.Content;
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
-import org.jboss.logging.Logger;
 import org.jboss.resteasy.reactive.RestStreamElementType;
 import org.jboss.resteasy.reactive.server.jaxrs.OutboundSseEventImpl;
 
@@ -23,13 +24,10 @@ import dev.martindotpy.dropwizardquarkusspring.shared.cloud.model.GhcrManifestLi
 import dev.martindotpy.dropwizardquarkusspring.shared.cloud.model.GhcrManifestSummaryFactory;
 import dev.martindotpy.dropwizardquarkusspring.shared.cloud.model.GhcrTokenResponse;
 import dev.martindotpy.dropwizardquarkusspring.shared.cloud.model.ImageManifestSummary;
-import dev.martindotpy.dropwizardquarkusspring.shared.cloud.model.ServiceComparasion;
+import dev.martindotpy.dropwizardquarkusspring.shared.cloud.model.ServiceComparison;
 import dev.martindotpy.dropwizardquarkusspring.shared.cloud.model.ServiceLiveMetrics;
-import dev.martindotpy.dropwizardquarkusspring.shared.cloud.model.ServiceResourceSnapshot;
 import dev.martindotpy.dropwizardquarkusspring.shared.cloud.model.ServiceSnapshotFactory;
-import dev.martindotpy.dropwizardquarkusspring.shared.cloud.model.ServiceStartupMetrics;
 import io.quarkus.runtime.StartupEvent;
-import io.quarkus.runtime.annotations.RegisterForReflection;
 import io.smallrye.mutiny.Multi;
 import jakarta.enterprise.event.Observes;
 import jakarta.inject.Inject;
@@ -38,22 +36,18 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.sse.OutboundSseEvent;
+import lombok.extern.slf4j.Slf4j;
 
-@RegisterForReflection(targets = {
-        ServiceLiveMetrics.class,
-        ServiceStartupMetrics.class,
-        ServiceResourceSnapshot.class
-})
+@Slf4j
 @Path("/api/quarkus/cloud")
 @Tag(name = "Cloud", description = "Endpoints for cloud performance comparison.")
-public class CloudComparisonController {
-    private static final Logger LOGGER = Logger.getLogger(CloudComparisonController.class);
+public class MetricsController {
     private static final Duration STREAM_INTERVAL = Duration.ofSeconds(1);
     private static final String BOOTSTRAP_TIMING_CLASS = "io.quarkus.bootstrap.runner.Timing";
     private static final String MAIN_TIMING_FIELD = "main";
     private static final String BOOT_START_TIME_FIELD = "bootStartTime";
 
-    private static final String HOSTNAME = hostname();
+    private static final String HOSTNAME = resolveHostname();
 
     @Inject
     @RestClient
@@ -77,8 +71,8 @@ public class CloudComparisonController {
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(summary = "Cloud static metrics", description = "Returns static metrics and image metadata used for framework comparison.")
     @APIResponse(responseCode = "200", description = "Cloud static metrics retrieved successfully")
-    public ServiceComparasion staticMetrics() {
-        return new ServiceComparasion(
+    public ServiceComparison staticMetrics() {
+        return new ServiceComparison(
                 "quarkus",
                 serviceName,
                 ServiceSnapshotFactory.RUNTIME_MODE,
@@ -97,29 +91,21 @@ public class CloudComparisonController {
     @Produces(MediaType.SERVER_SENT_EVENTS)
     @RestStreamElementType(MediaType.APPLICATION_JSON)
     @Operation(summary = "Cloud live metrics stream", description = "Streams live startup and runtime metrics as server-sent events.")
-    @APIResponse(responseCode = "200", description = "Cloud live metrics stream started")
+    @APIResponse(responseCode = "200", description = "Cloud live metrics stream started", content = @Content(schema = @Schema(implementation = ServiceLiveMetrics.class)))
     public Multi<OutboundSseEvent> liveMetricsStream() {
         return Multi.createFrom().ticks().every(STREAM_INTERVAL)
-                .onItem().transform(tick -> toSseEvent(buildLiveMetrics()));
+                .onItem().transform(tick -> new OutboundSseEventImpl.BuilderImpl()
+                        .name("metrics")
+                        .mediaType(MediaType.APPLICATION_JSON_TYPE)
+                        .data(ServiceLiveMetrics.class, ServiceSnapshotFactory.liveMetrics())
+                        .build());
     }
 
     // Helpers
-    private ServiceLiveMetrics buildLiveMetrics() {
-        return ServiceSnapshotFactory.liveMetrics();
-    }
-
     private List<ImageManifestSummary> fetchImageSummaries(List<String> imageNames) {
         return imageNames.stream()
                 .map(this::fetchImageSummary)
                 .toList();
-    }
-
-    private static OutboundSseEvent toSseEvent(ServiceLiveMetrics payload) {
-        return new OutboundSseEventImpl.BuilderImpl()
-                .name("metrics")
-                .mediaType(MediaType.APPLICATION_JSON_TYPE)
-                .data(ServiceLiveMetrics.class, payload)
-                .build();
     }
 
     private long resolveQuarkusStartupReadyMs() {
@@ -151,13 +137,15 @@ public class CloudComparisonController {
 
             return TimeUnit.NANOSECONDS.toMillis(elapsedNanos);
         } catch (Exception ex) {
-            LOGGER.warn("Unable to resolve Quarkus startup timing from bootstrap runtime.", ex);
+            log.warn("Unable to resolve Quarkus startup timing from bootstrap runtime.", ex);
+
             return fallbackStartupReadyMs();
         }
     }
 
     private long fallbackStartupReadyMs() {
         long value = System.currentTimeMillis() - frameworkStartedAtMs;
+
         return value >= 0 ? value : 0L;
     }
 
@@ -188,7 +176,7 @@ public class CloudComparisonController {
         }
     }
 
-    private static String hostname() {
+    private static String resolveHostname() {
         try {
             return InetAddress.getLocalHost().getHostName();
         } catch (UnknownHostException ex) {

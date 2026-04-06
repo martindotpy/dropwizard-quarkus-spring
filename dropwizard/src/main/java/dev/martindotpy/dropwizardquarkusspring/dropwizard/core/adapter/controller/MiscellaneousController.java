@@ -14,15 +14,7 @@ import jakarta.ws.rs.core.MediaType;
 @Path("/")
 @Tag(name = "Miscellaneous", description = "Endpoints for miscellaneous information and testing.")
 public class MiscellaneousController {
-    public static String hostname;
-
-    static {
-        try {
-            hostname = InetAddress.getLocalHost().getHostName();
-        } catch (UnknownHostException e) {
-            e.printStackTrace();
-        }
-    }
+    private static final String HOSTNAME = resolveHostname();
 
     @GET
     @Path("/hello")
@@ -37,6 +29,14 @@ public class MiscellaneousController {
     @Operation(summary = "Hostname", description = "Returns the hostname of the server.")
     @Produces(MediaType.TEXT_PLAIN)
     public String hostname() {
-        return "Hello, my hostname is " + hostname;
+        return "Hello, my hostname is " + HOSTNAME;
+    }
+
+    private static String resolveHostname() {
+        try {
+            return InetAddress.getLocalHost().getHostName();
+        } catch (UnknownHostException ex) {
+            return "unknown";
+        }
     }
 }

@@ -2,7 +2,7 @@ package dev.martindotpy.dropwizardquarkusspring.shared.cloud.model;
 
 import java.util.List;
 
-public record ServiceComparasion(
+public record ServiceComparison(
         String framework,
         String service,
         String runtimeMode,

@@ -74,10 +74,10 @@ public class NoteController {
     @APIResponse(responseCode = "422", description = "Validation error", content = @Content(mediaType = MediaType.APPLICATION_JSON, schema = @Schema(implementation = ValidationErrorMessage.class)))
     public @JsonView(DtoView.Public.class) NotNullDataResponse<Note> update(
             @Valid @JsonView(DtoView.Update.class) Note note) {
-        Note updatedNode = updateNotePort.update(note)
+        Note updatedNote = updateNotePort.update(note)
                 .orElseThrow(NotFoundException::new);
 
-        return NotNullDataResponse.of(updatedNode, "Nota actualizada exitosamente");
+        return NotNullDataResponse.of(updatedNote, "Nota actualizada exitosamente");
     }
 
     @DELETE

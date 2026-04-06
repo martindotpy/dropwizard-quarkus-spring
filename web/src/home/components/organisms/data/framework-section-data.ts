@@ -1,12 +1,12 @@
 import {
   getApiDropwizardCloudMetricsLive,
   getApiQuarkusCloudMetricsLive,
-  openapiLiveMetricsStream,
+  getApiSpringCloudMetricsLive,
 } from "@/api/client"
 import {
   getApiDropwizardCloudMetricsInfoOptions,
   getApiQuarkusCloudMetricsInfoOptions,
-  openapiStaticMetricsOptions,
+  getApiSpringCloudMetricsInfoOptions,
 } from "@/api/client/@tanstack/react-query.gen"
 
 // Data
@@ -27,7 +27,7 @@ export const frameworkSectionData = {
   },
   spring: {
     title: "Spring",
-    serviceInformationQueryOptions: openapiStaticMetricsOptions,
-    getLiveMetricsSse: openapiLiveMetricsStream,
+    serviceInformationQueryOptions: getApiSpringCloudMetricsInfoOptions,
+    getLiveMetricsSse: getApiSpringCloudMetricsLive,
   },
 } satisfies FrameworkSection

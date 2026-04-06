@@ -13,7 +13,7 @@ import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoDatabase;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
-import dev.martindotpy.dropwizardquarkusspring.dropwizard.core.adapter.controller.CloudComparisonController;
+import dev.martindotpy.dropwizardquarkusspring.dropwizard.core.adapter.controller.MetricsController;
 import dev.martindotpy.dropwizardquarkusspring.dropwizard.core.adapter.controller.MiscellaneousController;
 import dev.martindotpy.dropwizardquarkusspring.dropwizard.core.adapter.controller.OpenApiController;
 import dev.martindotpy.dropwizardquarkusspring.dropwizard.core.adapter.repository.NoteMongoRepository;
@@ -100,7 +100,7 @@ public class DropwizardApplication extends Application<DropwizardConfiguration> 
         JerseyEnvironment jersey = environment.jersey();
 
         jersey.register(new MiscellaneousController());
-        jersey.register(new CloudComparisonController(
+        jersey.register(new MetricsController(
                 ghcrClient,
                 getName(),
                 DropwizardApplication.class.getPackage().getImplementationVersion(),

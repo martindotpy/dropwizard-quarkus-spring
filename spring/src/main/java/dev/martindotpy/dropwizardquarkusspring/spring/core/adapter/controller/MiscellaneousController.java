@@ -14,15 +14,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @RequestMapping("/")
 @Tag(name = "Miscellaneous", description = "Endpoints for miscellaneous information and testing.")
 public class MiscellaneousController {
-    public static String hostname;
-
-    static {
-        try {
-            hostname = InetAddress.getLocalHost().getHostName();
-        } catch (UnknownHostException e) {
-            e.printStackTrace();
-        }
-    }
+    private static final String HOSTNAME = resolveHostname();
 
     @GetMapping("/hello")
     @Operation(hidden = true)
@@ -33,6 +25,14 @@ public class MiscellaneousController {
     @GetMapping("/api/spring/hostname")
     @Operation(summary = "Hostname", description = "Returns the hostname of the server.")
     public String hostname() {
-        return "Hola desde Spring en " + hostname;
+        return "Hello, my hostname is " + HOSTNAME;
+    }
+
+    private static String resolveHostname() {
+        try {
+            return InetAddress.getLocalHost().getHostName();
+        } catch (UnknownHostException ex) {
+            return "unknown";
+        }
     }
 }

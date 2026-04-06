@@ -9,6 +9,9 @@ import type {
   DeleteApiQuarkusNoteByIdData,
   DeleteApiQuarkusNoteByIdErrors,
   DeleteApiQuarkusNoteByIdResponses,
+  DeleteApiSpringNoteByIdData,
+  DeleteApiSpringNoteByIdErrors,
+  DeleteApiSpringNoteByIdResponses,
   GetApiDropwizardCloudMetricsInfoData,
   GetApiDropwizardCloudMetricsInfoResponses,
   GetApiDropwizardCloudMetricsLiveData,
@@ -27,36 +30,33 @@ import type {
   GetApiQuarkusHostnameResponses,
   GetApiQuarkusNoteData,
   GetApiQuarkusNoteResponses,
-  OpenapiCreateData,
-  OpenapiCreateErrors,
-  OpenapiCreateResponses,
-  OpenapiDeleteData,
-  OpenapiDeleteErrors,
-  OpenapiDeleteResponses,
-  OpenapiGetAllData,
-  OpenapiGetAllResponses,
-  OpenapiHostnameData,
-  OpenapiHostnameResponses,
-  OpenapiLiveMetricsStreamData,
-  OpenapiLiveMetricsStreamResponse,
-  OpenapiLiveMetricsStreamResponses,
-  OpenapiStaticMetricsData,
-  OpenapiStaticMetricsResponses,
-  OpenapiUpdateData,
-  OpenapiUpdateErrors,
-  OpenapiUpdateResponses,
+  GetApiSpringCloudMetricsInfoData,
+  GetApiSpringCloudMetricsInfoResponses,
+  GetApiSpringCloudMetricsLiveData,
+  GetApiSpringCloudMetricsLiveResponse,
+  GetApiSpringCloudMetricsLiveResponses,
+  GetApiSpringHostnameData,
+  GetApiSpringHostnameResponses,
+  GetApiSpringNoteData,
+  GetApiSpringNoteResponses,
   PostApiDropwizardNoteData,
   PostApiDropwizardNoteErrors,
   PostApiDropwizardNoteResponses,
   PostApiQuarkusNoteData,
   PostApiQuarkusNoteErrors,
   PostApiQuarkusNoteResponses,
+  PostApiSpringNoteData,
+  PostApiSpringNoteErrors,
+  PostApiSpringNoteResponses,
   PutApiDropwizardNoteData,
   PutApiDropwizardNoteErrors,
   PutApiDropwizardNoteResponses,
   PutApiQuarkusNoteData,
   PutApiQuarkusNoteErrors,
   PutApiQuarkusNoteResponses,
+  PutApiSpringNoteData,
+  PutApiSpringNoteErrors,
+  PutApiSpringNoteResponses,
 } from "./types.gen"
 
 export type Options<
@@ -237,6 +237,8 @@ export const getApiQuarkusCloudMetricsLive = <
 
 /**
  * Hostname
+ *
+ * Returns the hostname of the server.
  */
 export const getApiQuarkusHostname = <ThrowOnError extends boolean = false>(
   options?: Options<GetApiQuarkusHostnameData, ThrowOnError>
@@ -322,11 +324,11 @@ export const deleteApiQuarkusNoteById = <ThrowOnError extends boolean = false>(
  *
  * Retrieve all notes.
  */
-export const openapiGetAll = <ThrowOnError extends boolean = false>(
-  options?: Options<OpenapiGetAllData, ThrowOnError>
+export const getApiSpringNote = <ThrowOnError extends boolean = false>(
+  options?: Options<GetApiSpringNoteData, ThrowOnError>
 ) =>
   (options?.client ?? client).get<
-    OpenapiGetAllResponses,
+    GetApiSpringNoteResponses,
     unknown,
     ThrowOnError
   >({ url: "/api/spring/note", ...options })
@@ -336,12 +338,12 @@ export const openapiGetAll = <ThrowOnError extends boolean = false>(
  *
  * Create a new note.
  */
-export const openapiCreate = <ThrowOnError extends boolean = false>(
-  options: Options<OpenapiCreateData, ThrowOnError>
+export const postApiSpringNote = <ThrowOnError extends boolean = false>(
+  options: Options<PostApiSpringNoteData, ThrowOnError>
 ) =>
   (options.client ?? client).post<
-    OpenapiCreateResponses,
-    OpenapiCreateErrors,
+    PostApiSpringNoteResponses,
+    PostApiSpringNoteErrors,
     ThrowOnError
   >({
     url: "/api/spring/note",
@@ -357,12 +359,12 @@ export const openapiCreate = <ThrowOnError extends boolean = false>(
  *
  * Update an existing note.
  */
-export const openapiUpdate = <ThrowOnError extends boolean = false>(
-  options: Options<OpenapiUpdateData, ThrowOnError>
+export const putApiSpringNote = <ThrowOnError extends boolean = false>(
+  options: Options<PutApiSpringNoteData, ThrowOnError>
 ) =>
   (options.client ?? client).put<
-    OpenapiUpdateResponses,
-    OpenapiUpdateErrors,
+    PutApiSpringNoteResponses,
+    PutApiSpringNoteErrors,
     ThrowOnError
   >({
     url: "/api/spring/note",
@@ -378,11 +380,11 @@ export const openapiUpdate = <ThrowOnError extends boolean = false>(
  *
  * Returns the hostname of the server.
  */
-export const openapiHostname = <ThrowOnError extends boolean = false>(
-  options?: Options<OpenapiHostnameData, ThrowOnError>
+export const getApiSpringHostname = <ThrowOnError extends boolean = false>(
+  options?: Options<GetApiSpringHostnameData, ThrowOnError>
 ) =>
   (options?.client ?? client).get<
-    OpenapiHostnameResponses,
+    GetApiSpringHostnameResponses,
     unknown,
     ThrowOnError
   >({ url: "/api/spring/hostname", ...options })
@@ -392,15 +394,17 @@ export const openapiHostname = <ThrowOnError extends boolean = false>(
  *
  * Streams live startup and runtime metrics as server-sent events.
  */
-export const openapiLiveMetricsStream = <ThrowOnError extends boolean = false>(
+export const getApiSpringCloudMetricsLive = <
+  ThrowOnError extends boolean = false,
+>(
   options?: Options<
-    OpenapiLiveMetricsStreamData,
+    GetApiSpringCloudMetricsLiveData,
     ThrowOnError,
-    OpenapiLiveMetricsStreamResponse
+    GetApiSpringCloudMetricsLiveResponse
   >
 ) =>
   (options?.client ?? client).sse.get<
-    OpenapiLiveMetricsStreamResponses,
+    GetApiSpringCloudMetricsLiveResponses,
     unknown,
     ThrowOnError
   >({ url: "/api/spring/cloud/metrics/live", ...options })
@@ -410,11 +414,13 @@ export const openapiLiveMetricsStream = <ThrowOnError extends boolean = false>(
  *
  * Returns static metrics and image metadata used for framework comparison.
  */
-export const openapiStaticMetrics = <ThrowOnError extends boolean = false>(
-  options?: Options<OpenapiStaticMetricsData, ThrowOnError>
+export const getApiSpringCloudMetricsInfo = <
+  ThrowOnError extends boolean = false,
+>(
+  options?: Options<GetApiSpringCloudMetricsInfoData, ThrowOnError>
 ) =>
   (options?.client ?? client).get<
-    OpenapiStaticMetricsResponses,
+    GetApiSpringCloudMetricsInfoResponses,
     unknown,
     ThrowOnError
   >({ url: "/api/spring/cloud/metrics/info", ...options })
@@ -424,11 +430,11 @@ export const openapiStaticMetrics = <ThrowOnError extends boolean = false>(
  *
  * Delete an existing note.
  */
-export const openapiDelete = <ThrowOnError extends boolean = false>(
-  options: Options<OpenapiDeleteData, ThrowOnError>
+export const deleteApiSpringNoteById = <ThrowOnError extends boolean = false>(
+  options: Options<DeleteApiSpringNoteByIdData, ThrowOnError>
 ) =>
   (options.client ?? client).delete<
-    OpenapiDeleteResponses,
-    OpenapiDeleteErrors,
+    DeleteApiSpringNoteByIdResponses,
+    DeleteApiSpringNoteByIdErrors,
     ThrowOnError
   >({ url: "/api/spring/note/{id}", ...options })

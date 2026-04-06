@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 import io.quarkus.test.junit.QuarkusTest;
 
 @QuarkusTest
-class CloudComparisonControllerTest {
+class MetricsControllerTest {
     @Test
     void testCloudStaticMetricsEndpoint() {
         given()

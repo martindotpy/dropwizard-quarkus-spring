@@ -52,7 +52,7 @@ export type OpenapiNoteUpdate = {
   content: string
 }
 
-export type OpenapiServiceComparasion = {
+export type OpenapiServiceComparison = {
   framework?: string
   service?: string
   runtimeMode?: string
@@ -188,32 +188,7 @@ export type OpenapiHttpValidationProblemPublic = {
   [key: string]: unknown
 }
 
-export type OpenapiMediaType = {
-  type?: string
-  subtype?: string
-  parameters?: {
-    [key: string]: string
-  }
-  hash?: number
-  wildcardType?: boolean
-  wildcardSubtype?: boolean
-}
-
-export type OpenapiOutboundSseEvent = {
-  id?: string
-  name?: string
-  comment?: string
-  reconnectDelay?: number
-  reconnectDelaySet?: boolean
-  type?: {
-    [key: string]: unknown
-  }
-  genericType?: {
-    [key: string]: unknown
-  }
-  mediaType?: OpenapiMediaType
-  data?: unknown
-}
+export type OpenapiInstant = string
 
 /**
  * Validation constraint violation details
@@ -262,10 +237,6 @@ export type OpenapiProblemDetailPublic = {
   }
 }
 
-export type OpenapiSseEmitter = {
-  timeout?: number
-}
-
 export type OpenapiProblemDetail = {
   type?: string
   title?: string
@@ -288,7 +259,7 @@ export type GetApiDropwizardCloudMetricsInfoResponses = {
   /**
    * Cloud static metrics retrieved successfully
    */
-  200: OpenapiServiceComparasion
+  200: OpenapiServiceComparison
 }
 
 export type GetApiDropwizardCloudMetricsInfoResponse =
@@ -451,7 +422,7 @@ export type GetApiQuarkusCloudMetricsInfoResponses = {
   /**
    * Cloud static metrics retrieved successfully
    */
-  200: OpenapiServiceComparasion
+  200: OpenapiServiceComparison
 }
 
 export type GetApiQuarkusCloudMetricsInfoResponse =
@@ -468,7 +439,7 @@ export type GetApiQuarkusCloudMetricsLiveResponses = {
   /**
    * Cloud live metrics stream started
    */
-  200: Array<OpenapiOutboundSseEvent>
+  200: OpenapiServiceLiveMetrics
 }
 
 export type GetApiQuarkusCloudMetricsLiveResponse =
@@ -611,57 +582,58 @@ export type DeleteApiQuarkusNoteByIdResponses = {
 export type DeleteApiQuarkusNoteByIdResponse =
   DeleteApiQuarkusNoteByIdResponses[keyof DeleteApiQuarkusNoteByIdResponses]
 
-export type OpenapiGetAllData = {
+export type GetApiSpringNoteData = {
   body?: never
   path?: never
   query?: never
   url: "/api/spring/note"
 }
 
-export type OpenapiGetAllResponses = {
+export type GetApiSpringNoteResponses = {
   /**
    * Notes retrieved successfully
    */
   200: OpenapiNotNullDataResponseListNotePublic
 }
 
-export type OpenapiGetAllResponse =
-  OpenapiGetAllResponses[keyof OpenapiGetAllResponses]
+export type GetApiSpringNoteResponse =
+  GetApiSpringNoteResponses[keyof GetApiSpringNoteResponses]
 
-export type OpenapiCreateData = {
+export type PostApiSpringNoteData = {
   body: OpenapiNoteCreate
   path?: never
   query?: never
   url: "/api/spring/note"
 }
 
-export type OpenapiCreateErrors = {
+export type PostApiSpringNoteErrors = {
   /**
    * Invalid input data
    */
   400: OpenapiNotNullDataResponseNotePublic
 }
 
-export type OpenapiCreateError = OpenapiCreateErrors[keyof OpenapiCreateErrors]
+export type PostApiSpringNoteError =
+  PostApiSpringNoteErrors[keyof PostApiSpringNoteErrors]
 
-export type OpenapiCreateResponses = {
+export type PostApiSpringNoteResponses = {
   /**
    * Note created successfully
    */
   200: OpenapiNotNullDataResponseNotePublic
 }
 
-export type OpenapiCreateResponse =
-  OpenapiCreateResponses[keyof OpenapiCreateResponses]
+export type PostApiSpringNoteResponse =
+  PostApiSpringNoteResponses[keyof PostApiSpringNoteResponses]
 
-export type OpenapiUpdateData = {
+export type PutApiSpringNoteData = {
   body: OpenapiNoteUpdate
   path?: never
   query?: never
   url: "/api/spring/note"
 }
 
-export type OpenapiUpdateErrors = {
+export type PutApiSpringNoteErrors = {
   /**
    * Invalid input data
    */
@@ -672,70 +644,71 @@ export type OpenapiUpdateErrors = {
   404: OpenapiProblemDetailPublic
 }
 
-export type OpenapiUpdateError = OpenapiUpdateErrors[keyof OpenapiUpdateErrors]
+export type PutApiSpringNoteError =
+  PutApiSpringNoteErrors[keyof PutApiSpringNoteErrors]
 
-export type OpenapiUpdateResponses = {
+export type PutApiSpringNoteResponses = {
   /**
    * Note updated successfully
    */
   200: OpenapiNotNullDataResponseNotePublic
 }
 
-export type OpenapiUpdateResponse =
-  OpenapiUpdateResponses[keyof OpenapiUpdateResponses]
+export type PutApiSpringNoteResponse =
+  PutApiSpringNoteResponses[keyof PutApiSpringNoteResponses]
 
-export type OpenapiHostnameData = {
+export type GetApiSpringHostnameData = {
   body?: never
   path?: never
   query?: never
   url: "/api/spring/hostname"
 }
 
-export type OpenapiHostnameResponses = {
+export type GetApiSpringHostnameResponses = {
   /**
    * OK
    */
   200: string
 }
 
-export type OpenapiHostnameResponse =
-  OpenapiHostnameResponses[keyof OpenapiHostnameResponses]
+export type GetApiSpringHostnameResponse =
+  GetApiSpringHostnameResponses[keyof GetApiSpringHostnameResponses]
 
-export type OpenapiLiveMetricsStreamData = {
+export type GetApiSpringCloudMetricsLiveData = {
   body?: never
   path?: never
   query?: never
   url: "/api/spring/cloud/metrics/live"
 }
 
-export type OpenapiLiveMetricsStreamResponses = {
+export type GetApiSpringCloudMetricsLiveResponses = {
   /**
    * Cloud live metrics stream started
    */
-  200: OpenapiSseEmitter
+  200: OpenapiServiceLiveMetrics
 }
 
-export type OpenapiLiveMetricsStreamResponse =
-  OpenapiLiveMetricsStreamResponses[keyof OpenapiLiveMetricsStreamResponses]
+export type GetApiSpringCloudMetricsLiveResponse =
+  GetApiSpringCloudMetricsLiveResponses[keyof GetApiSpringCloudMetricsLiveResponses]
 
-export type OpenapiStaticMetricsData = {
+export type GetApiSpringCloudMetricsInfoData = {
   body?: never
   path?: never
   query?: never
   url: "/api/spring/cloud/metrics/info"
 }
 
-export type OpenapiStaticMetricsResponses = {
+export type GetApiSpringCloudMetricsInfoResponses = {
   /**
    * Cloud static metrics retrieved successfully
    */
-  200: OpenapiServiceComparasion
+  200: OpenapiServiceComparison
 }
 
-export type OpenapiStaticMetricsResponse =
-  OpenapiStaticMetricsResponses[keyof OpenapiStaticMetricsResponses]
+export type GetApiSpringCloudMetricsInfoResponse =
+  GetApiSpringCloudMetricsInfoResponses[keyof GetApiSpringCloudMetricsInfoResponses]
 
-export type OpenapiDeleteData = {
+export type DeleteApiSpringNoteByIdData = {
   body?: never
   path: {
     id: string
@@ -744,7 +717,7 @@ export type OpenapiDeleteData = {
   url: "/api/spring/note/{id}"
 }
 
-export type OpenapiDeleteErrors = {
+export type DeleteApiSpringNoteByIdErrors = {
   /**
    * Invalid note ID format
    */
@@ -759,14 +732,15 @@ export type OpenapiDeleteErrors = {
   500: OpenapiProblemDetail
 }
 
-export type OpenapiDeleteError = OpenapiDeleteErrors[keyof OpenapiDeleteErrors]
+export type DeleteApiSpringNoteByIdError =
+  DeleteApiSpringNoteByIdErrors[keyof DeleteApiSpringNoteByIdErrors]
 
-export type OpenapiDeleteResponses = {
+export type DeleteApiSpringNoteByIdResponses = {
   /**
    * Note deleted successfully
    */
   200: OpenapiSimpleResponse
 }
 
-export type OpenapiDeleteResponse =
-  OpenapiDeleteResponses[keyof OpenapiDeleteResponses]
+export type DeleteApiSpringNoteByIdResponse =
+  DeleteApiSpringNoteByIdResponses[keyof DeleteApiSpringNoteByIdResponses]

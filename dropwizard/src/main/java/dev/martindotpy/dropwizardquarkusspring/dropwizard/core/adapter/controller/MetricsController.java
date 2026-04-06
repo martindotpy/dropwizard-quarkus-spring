@@ -16,7 +16,7 @@ import dev.martindotpy.dropwizardquarkusspring.shared.cloud.model.GhcrManifestLi
 import dev.martindotpy.dropwizardquarkusspring.shared.cloud.model.GhcrManifestSummaryFactory;
 import dev.martindotpy.dropwizardquarkusspring.shared.cloud.model.GhcrTokenResponse;
 import dev.martindotpy.dropwizardquarkusspring.shared.cloud.model.ImageManifestSummary;
-import dev.martindotpy.dropwizardquarkusspring.shared.cloud.model.ServiceComparasion;
+import dev.martindotpy.dropwizardquarkusspring.shared.cloud.model.ServiceComparison;
 import dev.martindotpy.dropwizardquarkusspring.shared.cloud.model.ServiceLiveMetrics;
 import dev.martindotpy.dropwizardquarkusspring.shared.cloud.model.ServiceSnapshotFactory;
 import jakarta.ws.rs.GET;
@@ -36,7 +36,7 @@ import lombok.RequiredArgsConstructor;
 @Path("/api/dropwizard/cloud")
 @Tag(name = "Cloud", description = "Endpoints for cloud performance comparison.")
 @RequiredArgsConstructor
-public class CloudComparisonController {
+public class MetricsController {
     private static final long STREAM_INTERVAL_MS = 1000L;
 
     private final Client ghcrClient;
@@ -44,15 +44,15 @@ public class CloudComparisonController {
     private final String version;
     private final AtomicLong startupReadyMs;
 
-    private static final String HOSTNAME = hostname();
+    private static final String HOSTNAME = resolveHostname();
 
     @GET
     @Path("/metrics/info")
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(summary = "Cloud static metrics", description = "Returns static metrics and image metadata used for framework comparison.")
     @APIResponse(responseCode = "200", description = "Cloud static metrics retrieved successfully")
-    public ServiceComparasion staticMetrics() {
-        return new ServiceComparasion(
+    public ServiceComparison staticMetrics() {
+        return new ServiceComparison(
                 "dropwizard",
                 serviceName,
                 ServiceSnapshotFactory.RUNTIME_MODE,
@@ -66,7 +66,7 @@ public class CloudComparisonController {
     @Path("/metrics/live")
     @Produces(MediaType.SERVER_SENT_EVENTS)
     @Operation(summary = "Cloud live metrics stream", description = "Streams live startup and runtime metrics as server-sent events.")
-    @APIResponse(responseCode = "200", description = "Cloud live metrics stream started", content = @Content(mediaType = MediaType.SERVER_SENT_EVENTS, schema = @Schema(implementation = ServiceLiveMetrics.class)))
+    @APIResponse(responseCode = "200", description = "Cloud live metrics stream started", content = @Content(schema = @Schema(implementation = ServiceLiveMetrics.class)))
     public void liveMetricsStream(@Context SseEventSink eventSink, @Context Sse sse) {
         Thread.ofVirtual().start(() -> streamMetrics(eventSink, sse));
     }
@@ -134,7 +134,7 @@ public class CloudComparisonController {
                 .build();
     }
 
-    private static String hostname() {
+    private static String resolveHostname() {
         try {
             return InetAddress.getLocalHost().getHostName();
         } catch (UnknownHostException ex) {
