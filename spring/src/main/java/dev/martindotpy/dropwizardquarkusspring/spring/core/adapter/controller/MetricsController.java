@@ -11,7 +11,6 @@ import org.springframework.http.codec.ServerSentEvent;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import reactor.core.publisher.Flux;
 
 import dev.martindotpy.dropwizardquarkusspring.shared.cloud.model.GhcrImageCatalog;
 import dev.martindotpy.dropwizardquarkusspring.shared.cloud.model.GhcrManifestListResponse;
@@ -30,6 +29,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import reactor.core.publisher.Flux;
 
 @RestController
 @RequestMapping("/api/spring/cloud")

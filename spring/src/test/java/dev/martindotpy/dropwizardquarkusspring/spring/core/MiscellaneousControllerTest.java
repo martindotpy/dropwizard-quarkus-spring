@@ -1,28 +1,31 @@
-package dev.martindotpy.dropwizardquarkusspring.quarkus.core;
+package dev.martindotpy.dropwizardquarkusspring.spring.core;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import io.quarkus.test.junit.QuarkusTest;
+class MiscellaneousControllerTest extends SpringIntegrationTestSupport {
+    @BeforeEach
+    void setUp() {
+        setupRestAssured();
+    }
 
-@QuarkusTest
-class MiscellaneousControllerTest {
     @Test
     void testHelloEndpoint() {
         given()
                 .when().get("/hello")
                 .then()
                 .statusCode(200)
-                .body(is("Hello from Quarkus REST"));
+                .body(is("Hello from Spring REST"));
     }
 
     @Test
     void testHostnameEndpoint() {
         given()
-                .when().get("/api/quarkus/hostname")
+                .when().get("/api/spring/hostname")
                 .then()
                 .statusCode(200)
                 .body(containsString("Hello, my hostname is"));

@@ -2,6 +2,7 @@ package dev.martindotpy.dropwizardquarkusspring.dropwizard.note.application.usec
 
 import java.util.Optional;
 
+import dev.martindotpy.dropwizardquarkusspring.dropwizard.note.application.mapper.NoteMapper;
 import dev.martindotpy.dropwizardquarkusspring.dropwizard.note.application.port.UpdateNotePort;
 import dev.martindotpy.dropwizardquarkusspring.dropwizard.note.domain.model.Note;
 import dev.martindotpy.dropwizardquarkusspring.dropwizard.note.domain.repository.NoteRepository;
@@ -11,18 +12,22 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class UpdateNoteUseCase implements UpdateNotePort {
     private final NoteRepository noteRepository;
+    private final NoteMapper noteMapper;
 
     @Override
     public Optional<Note> update(UpdateNotePayload payload) {
-        Optional<Note> existingNote = noteRepository.findById(payload.getId());
+        Note updatedNote = noteMapper.from(payload).build();
+
+        // Search for the note to update
+        Optional<Note> existingNote = noteRepository.findById(updatedNote.getId());
 
         if (existingNote.isEmpty()) {
             return Optional.empty();
         }
 
-        Note updated = existingNote.get();
-        updated.setContent(payload.getContent().trim());
+        // Update the note
+        noteRepository.update(updatedNote);
 
-        return Optional.ofNullable(noteRepository.update(updated));
+        return Optional.of(updatedNote);
     }
 }

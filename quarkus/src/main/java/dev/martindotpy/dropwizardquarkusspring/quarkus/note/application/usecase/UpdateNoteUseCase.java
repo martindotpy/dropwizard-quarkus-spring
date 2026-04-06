@@ -18,7 +18,8 @@ public class UpdateNoteUseCase implements UpdateNotePort {
 
     @Override
     public Optional<Note> update(UpdateNotePayload payload) {
-        Note updatedNote = noteMapper.from(payload).build();
+        Note updatedNote = noteMapper.from(payload)
+                .build();
 
         // Search for the note to update
         Optional<Note> existingNote = noteRepository.findByIdOptional(updatedNote.id);

@@ -16,4 +16,4 @@ logging:
 
 mongo:
   uri: ${MONGO_URI:-mongodb://admin:admin@localhost:27017/notes-db?authSource=admin}
-  database: notes-db
+  database: ${MONGO_DATABASE:-notes-db}

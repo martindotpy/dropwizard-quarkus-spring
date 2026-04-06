@@ -1,9 +1,12 @@
-package dev.martindotpy.dropwizardquarkusspring.quarkus.core.application;
+package dev.martindotpy.dropwizardquarkusspring.shared.core.application;
+
+import lombok.NoArgsConstructor;
 
 /**
  * String utils mapper.
  */
-public class StringUtilsMapper {
+@NoArgsConstructor(access = lombok.AccessLevel.PRIVATE)
+public final class StringUtilsMapper {
     /**
      * Trims the given string.
      *

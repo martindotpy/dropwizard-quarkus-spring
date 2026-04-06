@@ -16,7 +16,8 @@ public class CreateNoteUseCase implements CreateNotePort {
 
     @Override
     public Note create(CreateNotePayload payload) {
-        Note note = noteMapper.from(payload).build();
+        Note note = noteMapper.from(payload)
+                .build();
 
         noteRepository.persist(note);
 

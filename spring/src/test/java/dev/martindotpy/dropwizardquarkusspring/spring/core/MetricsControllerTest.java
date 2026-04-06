@@ -1,4 +1,4 @@
-package dev.martindotpy.dropwizardquarkusspring.quarkus.core;
+package dev.martindotpy.dropwizardquarkusspring.spring.core;
 
 import static io.restassured.RestAssured.given;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -13,29 +13,29 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import io.quarkus.test.common.http.TestHTTPResource;
-import io.quarkus.test.junit.QuarkusTest;
-
-@QuarkusTest
-class MetricsControllerTest {
-    @TestHTTPResource("/api/quarkus/cloud/metrics/live")
-    URI liveMetricsUri;
+class MetricsControllerTest extends SpringIntegrationTestSupport {
+    @BeforeEach
+    void setUp() {
+        setupRestAssured();
+    }
 
     @Test
     void testCloudStaticMetricsEndpoint() {
         given()
-                .when().get("/api/quarkus/cloud/metrics/info")
+                .when().get("/api/spring/cloud/metrics/info")
                 .then()
                 .statusCode(200)
-                .body("framework", is("quarkus"))
+                .body("framework", is("spring"))
                 .body("startupReadyMs", greaterThanOrEqualTo(0));
     }
 
     @Test
     void testCloudMetricsLiveSseEndpoint() throws Exception {
-        HttpRequest request = HttpRequest.newBuilder(liveMetricsUri)
+        URI uri = URI.create("http://localhost:" + port + "/api/spring/cloud/metrics/live");
+        HttpRequest request = HttpRequest.newBuilder(uri)
                 .header("Accept", "text/event-stream")
                 .GET()
                 .build();
@@ -54,7 +54,7 @@ class MetricsControllerTest {
     @Test
     void testOpenApiEndpoint() {
         given()
-                .when().get("/api/quarkus/openapi.json")
+                .when().get("/api/spring/openapi.json")
                 .then()
                 .statusCode(200)
                 .contentType(containsString("application/json"))

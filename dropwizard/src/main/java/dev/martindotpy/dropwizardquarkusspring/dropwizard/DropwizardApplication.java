@@ -18,11 +18,13 @@ import dev.martindotpy.dropwizardquarkusspring.dropwizard.core.adapter.controlle
 import dev.martindotpy.dropwizardquarkusspring.dropwizard.core.adapter.controller.OpenApiController;
 import dev.martindotpy.dropwizardquarkusspring.dropwizard.core.adapter.repository.NoteMongoRepository;
 import dev.martindotpy.dropwizardquarkusspring.dropwizard.note.adapter.controller.NoteController;
+import dev.martindotpy.dropwizardquarkusspring.dropwizard.note.application.mapper.NoteMapper;
 import dev.martindotpy.dropwizardquarkusspring.dropwizard.note.application.usecase.CreateNoteUseCase;
 import dev.martindotpy.dropwizardquarkusspring.dropwizard.note.application.usecase.DeleteNoteUseCase;
 import dev.martindotpy.dropwizardquarkusspring.dropwizard.note.application.usecase.FindNoteUseCase;
 import dev.martindotpy.dropwizardquarkusspring.dropwizard.note.application.usecase.UpdateNoteUseCase;
 import dev.martindotpy.dropwizardquarkusspring.dropwizard.note.domain.model.Note;
+import org.mapstruct.factory.Mappers;
 import io.dropwizard.configuration.EnvironmentVariableSubstitutor;
 import io.dropwizard.configuration.SubstitutingSourceProvider;
 import io.dropwizard.core.Application;
@@ -91,10 +93,12 @@ public class DropwizardApplication extends Application<DropwizardConfiguration> 
         // Repositories and Use cases
         @SuppressWarnings("null")
         NoteMongoRepository noteRepository = new NoteMongoRepository(database.getCollection("note", Note.class));
+        @SuppressWarnings("null")
+        NoteMapper noteMapper = Mappers.getMapper(NoteMapper.class);
 
         FindNoteUseCase findNoteUseCase = new FindNoteUseCase(noteRepository);
-        CreateNoteUseCase createNoteUseCase = new CreateNoteUseCase(noteRepository);
-        UpdateNoteUseCase updateNoteUseCase = new UpdateNoteUseCase(noteRepository);
+        CreateNoteUseCase createNoteUseCase = new CreateNoteUseCase(noteRepository, noteMapper);
+        UpdateNoteUseCase updateNoteUseCase = new UpdateNoteUseCase(noteRepository, noteMapper);
         DeleteNoteUseCase deleteNoteUseCase = new DeleteNoteUseCase(noteRepository);
 
         JerseyEnvironment jersey = environment.jersey();
