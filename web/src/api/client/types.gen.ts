@@ -75,6 +75,18 @@ export type OpenapiServiceResourceSnapshot = {
   freeMemoryBytes?: number
   usedMemoryBytes?: number
   usedMemoryMiB?: number
+  nonHeapUsedMemoryBytes?: number
+  nonHeapCommittedMemoryBytes?: number
+  nonHeapMaxMemoryBytes?: number
+  gcCollectionCount?: number
+  gcCollectionTimeMs?: number
+  liveThreadCount?: number
+  daemonThreadCount?: number
+  peakThreadCount?: number
+  processCpuLoad?: number
+  systemCpuLoad?: number
+  processCpuTimeNs?: number
+  processRssBytes?: number
   javaVersion?: string
   vmName?: string
   osName?: string

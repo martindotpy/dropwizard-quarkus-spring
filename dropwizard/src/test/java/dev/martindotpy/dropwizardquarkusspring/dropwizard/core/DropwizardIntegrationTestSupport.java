@@ -2,7 +2,8 @@ package dev.martindotpy.dropwizardquarkusspring.dropwizard.core;
 
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
-import org.testcontainers.containers.MongoDBContainer;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.testcontainers.mongodb.MongoDBContainer;
 import org.testcontainers.utility.DockerImageName;
 
 import dev.martindotpy.dropwizardquarkusspring.dropwizard.DropwizardApplication;
@@ -11,7 +12,6 @@ import io.dropwizard.testing.ConfigOverride;
 import io.dropwizard.testing.ResourceHelpers;
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import io.dropwizard.testing.junit5.DropwizardExtensionsSupport;
-import org.junit.jupiter.api.extension.ExtendWith;
 
 @TestInstance(Lifecycle.PER_CLASS)
 @ExtendWith(DropwizardExtensionsSupport.class)

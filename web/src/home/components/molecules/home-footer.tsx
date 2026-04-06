@@ -5,7 +5,7 @@ import { RepositoryLink } from "@/home/components/atoms/repository-link"
 // Component
 export function HomeFooter() {
   return (
-    <footer className="not-prose flex w-full items-center justify-center">
+    <footer className="not-prose mt-8 flex w-full items-center justify-center">
       <OpenapiLink />
       <ThemeOptionSelect side="bottom" />
       <RepositoryLink />
