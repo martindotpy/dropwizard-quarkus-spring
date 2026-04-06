@@ -63,7 +63,10 @@
       "request": "launch",
       "command": "bun run api:generate",
       "cwd": "${workspaceFolder}/web",
-      "preLaunchTask": "wait:services"
+      "preLaunchTask": "wait:services",
+      "presentation": {
+        "hidden": true
+      }
     }
   ],
   "compounds": [

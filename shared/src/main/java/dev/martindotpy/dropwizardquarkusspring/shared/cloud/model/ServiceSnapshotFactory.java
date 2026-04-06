@@ -25,12 +25,8 @@ public final class ServiceSnapshotFactory {
     private static final String PROC_RSS_PREFIX = "VmRSS:";
 
     private static final String CGROUP_V2_MEMORY_CURRENT_PATH = "/sys/fs/cgroup/memory.current";
-    private static final String CGROUP_V2_MEMORY_MAX_PATH = "/sys/fs/cgroup/memory.max";
-    private static final String CGROUP_V2_UNBOUNDED_MEMORY_LIMIT = "max";
 
     private static final String CGROUP_V1_MEMORY_USAGE_PATH = "/sys/fs/cgroup/memory/memory.usage_in_bytes";
-    private static final String CGROUP_V1_MEMORY_LIMIT_PATH = "/sys/fs/cgroup/memory/memory.limit_in_bytes";
-    private static final long CGROUP_V1_UNBOUNDED_MEMORY_LIMIT = Long.MAX_VALUE - 4095L;
 
     public static final String RUNTIME_MODE = runtimeMode();
 
@@ -87,9 +83,7 @@ public final class ServiceSnapshotFactory {
                 cpuSnapshot.processCpuTimeNs(),
                 processRssBytes,
                 containerMemorySnapshot.usedBytes(),
-                containerMemorySnapshot.limitBytes(),
                 containerMemorySnapshot.usedMiB(),
-                containerMemorySnapshot.usagePercent(),
                 System.getProperty("java.version", "unknown"),
                 System.getProperty("java.vm.name", "unknown"),
                 System.getProperty("os.name", "unknown"),
@@ -185,32 +179,14 @@ public final class ServiceSnapshotFactory {
                 CGROUP_V2_MEMORY_CURRENT_PATH,
                 CGROUP_V1_MEMORY_USAGE_PATH));
 
-        long limitBytes = firstReadableContainerLimit(List.of(
-                CGROUP_V2_MEMORY_MAX_PATH,
-                CGROUP_V1_MEMORY_LIMIT_PATH));
-
         long usedMiB = usedBytes >= 0L ? toMiB(usedBytes) : NOT_AVAILABLE;
-        double usagePercent = usedBytes >= 0L && limitBytes > 0L
-                ? (double) usedBytes / (double) limitBytes
-                : CPU_NOT_AVAILABLE;
 
-        return new ContainerMemorySnapshot(usedBytes, limitBytes, usedMiB, usagePercent);
+        return new ContainerMemorySnapshot(usedBytes, usedMiB);
     }
 
     private static long firstReadableMetric(List<String> paths) {
         for (String path : paths) {
             long value = readLongMetric(path);
-            if (value >= 0L) {
-                return value;
-            }
-        }
-
-        return NOT_AVAILABLE;
-    }
-
-    private static long firstReadableContainerLimit(List<String> paths) {
-        for (String path : paths) {
-            long value = readContainerLimit(path);
             if (value >= 0L) {
                 return value;
             }
@@ -235,29 +211,6 @@ public final class ServiceSnapshotFactory {
         }
     }
 
-    private static long readContainerLimit(String path) {
-        Path metricPath = Path.of(path);
-        if (!Files.isReadable(metricPath)) {
-            return NOT_AVAILABLE;
-        }
-
-        try {
-            String rawValue = Files.readString(metricPath).trim();
-            if (CGROUP_V2_UNBOUNDED_MEMORY_LIMIT.equals(rawValue)) {
-                return NOT_AVAILABLE;
-            }
-
-            long parsedValue = Long.parseLong(rawValue);
-            if (parsedValue <= 0L || parsedValue >= CGROUP_V1_UNBOUNDED_MEMORY_LIMIT) {
-                return NOT_AVAILABLE;
-            }
-
-            return parsedValue;
-        } catch (IOException | NumberFormatException ex) {
-            return NOT_AVAILABLE;
-        }
-    }
-
     private static double safeCpuLoad(double value) {
         return value >= 0D ? value : CPU_NOT_AVAILABLE;
     }
@@ -273,6 +226,6 @@ public final class ServiceSnapshotFactory {
     private record CpuSnapshot(double processCpuLoad, double systemCpuLoad, long processCpuTimeNs) {
     }
 
-    private record ContainerMemorySnapshot(long usedBytes, long limitBytes, long usedMiB, double usagePercent) {
+    private record ContainerMemorySnapshot(long usedBytes, long usedMiB) {
     }
 }

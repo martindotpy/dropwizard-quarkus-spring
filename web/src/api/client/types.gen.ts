@@ -87,6 +87,8 @@ export type OpenapiServiceResourceSnapshot = {
   systemCpuLoad?: number
   processCpuTimeNs?: number
   processRssBytes?: number
+  containerMemoryUsedBytes?: number
+  containerMemoryUsedMiB?: number
   javaVersion?: string
   vmName?: string
   osName?: string
